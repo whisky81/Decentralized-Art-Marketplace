@@ -116,6 +116,24 @@ abstract contract ERC721 is IERC721, IERC165 {
     /**
      * @dev See {IERC721-transferFrom}.
      */
+
+    /**
+     * 
+     * 
+     * 
+     * 
+     * 
+     * 
+     * 
+     * 
+     * 
+     * 
+     * 
+     */
+
+
+
+
     function transferFrom(address _from, address _to, uint256 _tokenId) public virtual override {
         address owner = _requireOwner(_tokenId); // Checks existence and gets owner
         require(owner == _from, "ERC721: transfer from incorrect owner");

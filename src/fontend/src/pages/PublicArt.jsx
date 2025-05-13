@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { publicNewArtwork } from '../api/utils.js';
 import { ethers } from 'ethers';
+import { useNavigate } from "react-router-dom";
 
 const unitOptions = ["wei", "gwei", "finney", "ether"];
 
@@ -19,14 +20,14 @@ export default function PublicArt({ contract }) {
     const [price, setPrice] = useState("0");
     const [unit, setUnit] = useState("wei");
     const [metadataURI, setMetadataURI] = useState("");
+    const navigate = useNavigate();
 
     const handleSubmit = async () => {
         try {
             let weiAmount = unit === "wei" ? ethers.parseUnits(price, 0) : ethers.parseUnits(price, unit); 
             const receipt = await publicNewArtwork(contract, weiAmount, metadataURI);
             console.log(receipt);
-            alert("Transaction successful! Check your wallet for the new artwork.");
-            // const weiAmount = ethers.parseUnits
+            navigate("/"); 
         } catch (error) {
             alert(error.message); 
         }

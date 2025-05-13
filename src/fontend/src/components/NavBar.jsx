@@ -1,10 +1,11 @@
 import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
 import { Stack } from "@mui/system";
 import ArtTrackIcon from '@mui/icons-material/ArtTrack'; 
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
+import { Link } from 'react-router-dom';
 
 
-export default function Navbar({ contract }) {
+export default function Navbar({ contract, account }) {
     const [info, setInfo] = useState(null);
     useEffect(() => {
         const fetchData = async () => {
@@ -31,9 +32,9 @@ export default function Navbar({ contract }) {
           </Typography>
         </Stack>
         <Box>
-          <Button variant="outlined" sx={{ mx: 1 }}>ART GALLERY</Button>
-          <Button variant="outlined" sx={{ mx: 1 }}>PUBLISH YOUR ART</Button>
-          <Button variant="outlined" sx={{ mx: 1 }}>MY WALLET INFO</Button>
+          <Link to="/"><Button variant="outlined" sx={{ mx: 1 }}>ART GALLERY</Button></Link>
+          <Link to="/create"><Button variant="outlined" sx={{ mx: 1 }}>PUBLISH YOUR ART</Button></Link>
+          <Link to={`/${account}`}><Button variant="outlined" sx={{ mx: 1 }}>MY WALLET INFO</Button></Link>
           <Button variant="outlined" sx={{ mx: 1 }}>Guide</Button>
         </Box>
       </Toolbar>

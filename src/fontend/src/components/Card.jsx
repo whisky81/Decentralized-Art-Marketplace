@@ -3,8 +3,10 @@ import { Avatar, CardContent, CardHeader, CardMedia, Typography } from "@mui/mat
 import { useState, useEffect } from 'react';
 import Loading from './Loading';
 import { ethers } from 'ethers';
+import ForSale from './ForSale';
+import NotForSale from './NotForSale';
 export default function MyCard({ art, account }) {
-
+    console.log(art);
     const [metadata, setMetadata] = useState();
     useEffect(() => {
         const fetchData = async () => {
@@ -44,9 +46,9 @@ export default function MyCard({ art, account }) {
                     <h3>{metadata.name}</h3>
                     <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                         Price: {ethers.formatEther(art.price)} ETH
-                    </Typography>
+                    </Typography> 
+                    {art.isAvailable ? <ForSale /> : <NotForSale />}
                 </CardContent>
-
         </Card>
     )
 }

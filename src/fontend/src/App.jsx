@@ -5,6 +5,10 @@ import NavBar from './components/NavBar';
 import Loading from './components/Loading';
 import PublicArt from './pages/PublicArt';
 import ArtGallery from './pages/ArtGallery';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import CardDetail from './components/CardDetail'; 
+import MyWalletInfo from './pages/MyWalletInfo';
+import Transfer from './pages/Transfer';
 function App() {
   const [provider, setProvider] = useState(null);
   const [contract, setContract] = useState(null);
@@ -29,9 +33,20 @@ function App() {
 
   return (
     <>
-      <NavBar contract={contract}/>
-      <ArtGallery contract={contract} account={account}/>
-      <PublicArt contract={contract} />
+      
+      <BrowserRouter>
+        <NavBar contract={contract} account={account}/>
+        <Routes>
+          <Route path="/create" element={<PublicArt contract={contract} />} />
+          <Route path="/">
+            <Route index element={<ArtGallery contract={contract} account={account}/>}/>
+            <Route path="/nft/:tokenId" element={<CardDetail contract={contract} account={account}/>} />
+          </Route>
+          <Route path="/:account" element={<MyWalletInfo contract={contract} provider={provider}/>}/>
+          <Route path="/transfer/:tokenId" element={<Transfer contract={contract} account={account}/>}/>
+        </Routes>
+      </BrowserRouter>
+
     </>
   );
 }
