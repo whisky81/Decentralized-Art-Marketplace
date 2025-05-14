@@ -123,7 +123,9 @@ contract Whisky is ERC721 {
                 timestamp: block.timestamp,
                 status: AssetTxnStatus.Cancelled
             }));
-            revert("Transaction failed!");
+            // revert("Transaction failed!");
+            payable(msg.sender).transfer(msg.value);
+            return; 
         }
 
 
