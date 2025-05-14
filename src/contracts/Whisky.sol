@@ -106,13 +106,30 @@ contract Whisky is ERC721 {
         );
         
     } 
-
+ 
     function buyAsset(uint256 _tokenId) payable public {
+
+        require(_exists(_tokenId));
+
+
         (uint256 _price, AssetStatus _status, string memory metadataURI, address _owner) = findAsset(_tokenId); 
 
-        require(msg.sender != _owner, "You already own this asset");
-        require(_status == AssetStatus.Available, "Asset is not available for sale"); 
-        require(msg.value >= _price, "Insufficient funds"); 
+        if (msg.sender == _owner || _status != AssetStatus.Available || msg.value < _price) {
+            _assetTxns[_tokenId].push(AssetTxn({
+                id: _assetTxns[_tokenId].length,
+                price: _price,
+                seller: _owner,
+                buyer: msg.sender,
+                timestamp: block.timestamp,
+                status: AssetTxnStatus.Cancelled
+            }));
+            revert("Transaction failed!");
+        }
+
+
+        // require(msg.sender != _owner, "You already own this asset");
+        // require(_status == AssetStatus.Available, "Asset is not available for sale"); 
+        // require(msg.value >= _price, "Insufficient funds"); 
 
         _transfer(_owner, msg.sender, _tokenId); 
 
