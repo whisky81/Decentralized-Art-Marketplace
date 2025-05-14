@@ -13,7 +13,7 @@ export default function MyWalletInfo({ contract, provider }) {
 
     const isSame = (acc1, acc2) => {
         return acc1.toLowerCase() === acc2.toLowerCase()
-    } 
+    }
     const handleAddress = () => {
         if (isSame(account, data.reqAcc)) {
             return `My Address: ${account}`;
@@ -24,12 +24,12 @@ export default function MyWalletInfo({ contract, provider }) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [requestAccount] = await provider.send("eth_requestAccounts", []); 
+                const [requestAccount] = await provider.send("eth_requestAccounts", []);
 
                 const balance = await provider.getBalance(account);
                 const network = await provider.getNetwork();
-                
-                    setArts(await getMyArts(contract));
+
+                setArts(await getMyArts(contract));
 
                 setData({
                     reqAcc: requestAccount,
@@ -51,24 +51,81 @@ export default function MyWalletInfo({ contract, provider }) {
         return <Loading />;
     }
     return (
-        <div>
-            <p>{handleAddress()}</p>
-            <p>Balance: {data.balance} ETH</p>
-            <p>Network Name: {data.name ? data.name : "Unknow"}</p>
-            <p>Network Id: {data.chainId}</p>
-            <hr />
-            {isSame(account, data.reqAcc) ? 
+        <Box
+            minHeight="100vh"
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            bgcolor="#f7f0eb" // Background
+            p={2}
+        >
+            <Box
+                sx={{
+                    bgcolor: '#f5e9e1',
+                    p: 4,
+                    borderRadius: 3,
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                    maxWidth: 600,
+                    width: '100%',
+                    mb: 2,
+                    transition: 'transform 0.2s',
+                    '&:hover': {
+                        transform: 'scale(1.01)',
+                    },
+                }}
+            >
+                <Box mb={2}>
+                    <strong style={{ color: '#3b2f2f', fontSize: '1.1rem' }}>{handleAddress()}</strong>
+                </Box>
 
-            (<Box display="flex" flexWrap="wrap" gap={2}>
-                {arts.map(art => {
+                <Box display="flex" justifyContent="space-between" mb={1}>
+                    <span style={{ fontWeight: 500, color: '#5e4b47' }}>Balance:</span>
+                    <span style={{ fontWeight: 600 }}>{data.balance} ETH</span>
+                </Box>
 
-                    art.owner = account;
-                    return (
-                        <Link to={`/nft/${art.tokenId}`} style={{ textDecoration: 'none', color: 'inherit' }}><MyCard key={art.tokenId} art={art} account={account} /></Link>
+                <Box display="flex" justifyContent="space-between" mb={1}>
+                    <span style={{ fontWeight: 500, color: '#5e4b47' }}>Network Name:</span>
+                    <span style={{ fontWeight: 600 }}>{data.name ? data.name : 'Unknown'}</span>
+                </Box>
 
-                    );
-                })}
-            </Box>) : (<AnotherAccount />)}
-        </div>
+                <Box display="flex" justifyContent="space-between">
+                    <span style={{ fontWeight: 500, color: '#5e4b47' }}>Network ID:</span>
+                    <span style={{ fontWeight: 600 }}>{data.chainId}</span>
+                </Box>
+            </Box>
+
+
+            <Box
+                sx={{
+                    bgcolor: '#e4d7d2',
+                    p: 3,
+                    borderRadius: 2,
+                    boxShadow: 3,
+                    maxWidth: '1000px',
+                    width: '100%',
+                    mt: 0, // Remove extra top margin
+                }}
+            >
+                {isSame(account, data.reqAcc) ? (
+                    <Box display="flex" flexWrap="wrap" gap={2} justifyContent="center">
+                        {arts.map((art) => {
+                            art.owner = account;
+                            return (
+                                <Link
+                                    key={art.tokenId}
+                                    to={`/nft/${art.tokenId}`}
+                                    style={{ textDecoration: 'none', color: 'inherit' }}
+                                >
+                                    <MyCard art={art} account={account} />
+                                </Link>
+                            );
+                        })}
+                    </Box>
+                ) : (
+                    <AnotherAccount />
+                )}
+            </Box>
+        </Box>
     );
+
 }

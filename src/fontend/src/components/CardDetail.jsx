@@ -33,11 +33,12 @@ import {
     LocalOffer as LocalOfferIcon,
     AccessTime as AccessTimeIcon,
 } from '@mui/icons-material';
-import { getArtworkByTokenId } from '../api/utils';
+import { getArtworkByTokenId, shortenAddress, changeOrResell } from '../api/utils';
 import { useParams, Link } from 'react-router-dom';
 import Loading from './Loading';
 import EmptyState from './EmptyState';
 import SendIcon from '@mui/icons-material/Send';
+import ValueDialog from './ValueDialog';
 const traits = [
     { label: 'FAKE CHAIR (TEST)', value: 'All Fake Chair (Test)s', percentage: '22%' },
     { label: 'Floor', value: '--', percentage: null },
@@ -47,6 +48,7 @@ function CardDetail({ contract, account }) {
     const { tokenId } = useParams();
     const [art, setArt] = useState();
     const [metadata, setMetadata] = useState();
+    const [open, setOpen] = useState(false);
 
     const [expandedAccordion, setExpandedAccordion] = useState({
         description: true,
@@ -75,6 +77,11 @@ function CardDetail({ contract, account }) {
 
         fetchData();
     }, []);
+
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
 
     const handleAccordionChange = (panel) => (event, isExpanded) => {
         setExpandedAccordion(prev => ({ ...prev, [panel]: isExpanded }));
@@ -124,7 +131,7 @@ function CardDetail({ contract, account }) {
     const handleTrait = (trait_type, value) => {
         const type = trait_type.toLowerCase();
         if (type === "author") {
-            return <Link to={`/${value}`}>{value === account ? "You" : value}</Link>;
+            return <Link to={`/${value}`}>{value === account ? "You" : shortenAddress(value)}</Link>;
         } else if (type === "date") {
             return (new Date(value)).toString();
         }
@@ -135,6 +142,18 @@ function CardDetail({ contract, account }) {
     if (!metadata || !art) {
         return <Loading />;
     }
+
+    if (open) {
+        return <ValueDialog
+            open={open}
+            setOpen={setOpen}
+            tokenId={tokenId}
+            contract={contract}
+            p={art.price}
+            msg={art.owner === account ? (art.status ? "Change Price" : "Resell") : "Buy"} />;
+    }
+
+
 
     return (
         <>
@@ -147,7 +166,7 @@ function CardDetail({ contract, account }) {
                     {account.toLowerCase() === art.owner.toLowerCase() && (
                         <IconButton color="inherit"><Link to={`/transfer/${tokenId}`}><SendIcon /></Link></IconButton>
                     )}
-                    
+
 
                 </Toolbar>
             </AppBar>
@@ -189,7 +208,7 @@ function CardDetail({ contract, account }) {
                             <Box sx={{ flexGrow: 1, overflowY: 'auto' }}>
                                 <AccordionSection id="description" title="Description" icon={<DescriptionIcon fontSize="small" color="action" />} defaultExpanded>
                                     <Typography variant="body2" color="text.secondary" gutterBottom sx={{ fontSize: '0.875rem' }}>
-                                        By <Link to={`/${art.owner}`} underline="hover" sx={{ fontWeight: 'medium' }}>{art.owner === account ? "You" : art.owner}</Link>
+                                        By <Link to={`/${art.owner}`} underline="hover" sx={{ fontWeight: 'medium' }}>{art.owner === account ? "You" : shortenAddress(art.owner)}</Link>
                                     </Typography>
                                     <Box sx={{ maxHeight: 150, overflowY: 'auto', pr: 0.5, fontSize: '0.875rem', '&::-webkit-scrollbar': { width: '6px' }, '&::-webkit-scrollbar-thumb': { backgroundColor: 'grey.400', borderRadius: '3px' } }}>
                                         {metadata.description}
@@ -216,7 +235,7 @@ function CardDetail({ contract, account }) {
                                         <p>Token Id: {tokenId}</p>
                                         <p>Price: {art.price} ETH</p>
                                         <p>Status: {art.status ? "For Sale" : "Not For Sale"}</p>
-                                        <p>Owner: <Link to={`/${art.owner}`}>{art.owner === account ? "You" : art.owner}</Link></p>
+                                        <p>Owner: <Link to={`/${art.owner}`}>{art.owner === account ? "You" : shortenAddress(art.owner)}</Link></p>
                                         <p>Name: {metadata.name}</p>
                                         <p>Description: {metadata.description}</p>
                                         <p><a href={metadata.image}>Image</a></p>
@@ -251,6 +270,8 @@ function CardDetail({ contract, account }) {
                                     startIcon={<LocalOfferIcon />}
                                     size="large"
                                     sx={{ fontWeight: 'medium' }}
+                                    onClick={handleClickOpen}
+
                                 >
                                     {art.owner === account ? (art.status ? "Change Price" : "Resell") : "Buy"}
                                 </Button>

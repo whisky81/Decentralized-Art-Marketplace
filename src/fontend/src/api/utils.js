@@ -27,7 +27,6 @@ export function artGallery(contract) {
     });
 }
 
-
 export function handleProxyResult(proxyResult, fields) {
     const len = Object.keys(proxyResult[0]).length; 
     const res = [];
@@ -65,7 +64,6 @@ export function getArtworkByTokenId(contract, tokenId) {
     });
 } 
 
-
 export function getMyArts(contract) {
     return new Promise(async (resolve, reject) => {
         try {
@@ -82,6 +80,48 @@ export function transfer(contract, account, to, tokenId) {
         try {
             const tx = await contract.transferFrom(account, to, tokenId);
             const receipt = await tx.wait();
+            if (receipt.status === 1) {
+                resolve(receipt);
+            } else {
+                reject(new Error("Transaction failed"));
+            }
+        } catch(error) {
+            reject(error.message);
+        }
+    });
+} 
+
+export function shortenAddress(address) {
+    return address.slice(0, 6) + "..." + address.slice(-4); 
+} 
+
+export function changeOrResell(contract, tokenId, price) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const tx = await contract.resellAsset(BigInt(tokenId), BigInt(price));
+            const receipt = await tx.wait();
+            if (receipt.status === 1) {
+                resolve(receipt);
+            } else {
+                reject(new Error("Transaction failed"));
+            }
+        } catch(error) {
+            reject(error.message);
+        }
+    });
+} 
+
+export function parseUnits(unit, price) {
+    return unit === "wei" ? ethers.parseUnits(price, 0) : ethers.parseUnits(price, unit);
+}
+
+export function buy(contract, tokenId, price) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const tx = await contract.buyAsset(BigInt(tokenId), {
+                value: price 
+            });
+            const receipt = await tx.wait();  
             if (receipt.status === 1) {
                 resolve(receipt);
             } else {

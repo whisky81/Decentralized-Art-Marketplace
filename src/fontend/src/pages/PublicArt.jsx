@@ -2,17 +2,13 @@ import { useState } from "react";
 import {
     Box,
     TextField,
-    MenuItem,
     Typography,
-    InputAdornment,
-    FormControl,
-    Select,
-    OutlinedInput,
     Button,
 } from "@mui/material";
-import { publicNewArtwork } from '../api/utils.js';
+import { publicNewArtwork, parseUnits } from '../api/utils.js';
 import { ethers } from 'ethers';
 import { useNavigate } from "react-router-dom";
+import Value from "../components/Value.jsx";
 
 const unitOptions = ["wei", "gwei", "finney", "ether"];
 
@@ -24,7 +20,7 @@ export default function PublicArt({ contract }) {
 
     const handleSubmit = async () => {
         try {
-            let weiAmount = unit === "wei" ? ethers.parseUnits(price, 0) : ethers.parseUnits(price, unit); 
+            let weiAmount = parseUnits(unit, price); 
             const receipt = await publicNewArtwork(contract, weiAmount, metadataURI);
             console.log(receipt);
             navigate("/"); 
@@ -54,33 +50,7 @@ export default function PublicArt({ contract }) {
                     borderRadius: 2,
                 }}
             >
-                {/* VALUE */}
-                <Typography variant="subtitle2" sx={{ fontWeight: "bold", color: "#003300" }}>
-                    VALUE
-                </Typography>
-                <FormControl fullWidth>
-                    <OutlinedInput
-                        type="number"
-                        value={price}
-                        onChange={(e) => setPrice(e.target.value)}
-                        endAdornment={
-                            <InputAdornment position="end">
-                                <Select
-                                    value={unit}
-                                    onChange={(e) => setUnit(e.target.value)}
-                                    variant="standard"
-                                    disableUnderline
-                                >
-                                    {unitOptions.map((u) => (
-                                        <MenuItem key={u} value={u}>
-                                            {u}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </InputAdornment>
-                        }
-                    />
-                </FormControl>
+                <Value price={price} setUnit={setUnit} setPrice={setPrice} unit={unit}/>
 
                 {/* METADATA */}
                 <Typography variant="subtitle2" sx={{ fontWeight: "bold", color: "#003300" }}>
