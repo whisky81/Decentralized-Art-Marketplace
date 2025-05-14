@@ -9,6 +9,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import CardDetail from './components/CardDetail'; 
 import MyWalletInfo from './pages/MyWalletInfo';
 import Transfer from './pages/Transfer';
+import Guide from './pages/Guide';
 function App() {
   const [provider, setProvider] = useState(null);
   const [contract, setContract] = useState(null);
@@ -44,6 +45,7 @@ function App() {
           </Route>
           <Route path="/:account" element={<MyWalletInfo contract={contract} provider={provider}/>}/>
           <Route path="/transfer/:tokenId" element={<Transfer contract={contract} account={account}/>}/>
+          <Route path="/guide" element={<Guide />}/>
         </Routes>
       </BrowserRouter>
 

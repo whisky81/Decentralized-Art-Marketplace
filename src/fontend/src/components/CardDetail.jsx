@@ -35,7 +35,7 @@ import {
 } from '@mui/icons-material';
 import EventIcon from '@mui/icons-material/Event';
 import HistoryIcon from '@mui/icons-material/History';
-import { getArtworkByTokenId, shortenAddress, changeOrResell } from '../api/utils';
+import { getArtworkByTokenId, shortenAddress, changeOrResell, events } from '../api/utils';
 import { useParams, Link } from 'react-router-dom';
 import Loading from './Loading';
 import EmptyState from './EmptyState';
@@ -43,6 +43,7 @@ import SendIcon from '@mui/icons-material/Send';
 import ValueDialog from './ValueDialog';
 import PriceChart from './PriceChart';
 import TransferHistory from './TransferHistory';
+import EventStats from './EventStats';
 const traits = [
     { label: 'FAKE CHAIR (TEST)', value: 'All Fake Chair (Test)s', percentage: '22%' },
     { label: 'Floor', value: '--', percentage: null },
@@ -53,6 +54,7 @@ function CardDetail({ contract, account }) {
     const [art, setArt] = useState();
     const [metadata, setMetadata] = useState();
     const [open, setOpen] = useState(false);
+    const [event, setEvent] = useState();
 
     const [expandedAccordion, setExpandedAccordion] = useState({
         description: true,
@@ -67,6 +69,7 @@ function CardDetail({ contract, account }) {
     useEffect(() => {
         const fetchData = async () => {
             try {
+                setEvent(await events(contract, tokenId));
                 const res = await getArtworkByTokenId(contract, tokenId);
                 const response = await fetch(res.metadataURI);
                 const data = await response.json();
@@ -133,7 +136,7 @@ function CardDetail({ contract, account }) {
     const handleTrait = (trait_type, value) => {
         const type = trait_type.toLowerCase();
         if (type === "author") {
-            return <Link to={`/${value}`}>{value === account ? "You" : shortenAddress(value)}</Link>;
+            return <Link to={`/${value}`}>{value.toString() === account ? "You" : shortenAddress(value)}</Link>;
         } else if (type === "date") {
             return (new Date(value)).toString();
         }
@@ -208,9 +211,7 @@ function CardDetail({ contract, account }) {
                             <Box sx={{ flexGrow: 1, overflowY: 'auto' }}>
                                 <AccordionSection id="description" title="Description" icon={<DescriptionIcon fontSize="small" color="action" />} defaultExpanded>
                                     <Typography variant="body2" color="text.secondary" gutterBottom sx={{ fontSize: '0.875rem' }}>
-                                            {/* Author (not owner) -- WRONG*/}
-
-                                        By <Link to={`/${art.owner}`} underline="hover" sx={{ fontWeight: 'medium' }}>{art.owner === account ? "You" : shortenAddress(art.owner)}</Link>
+                                        By <Link to={`/${event.AssetCreated.author}`} underline="hover" sx={{ fontWeight: 'medium' }}>{event.AssetCreated.author === account ? "You" : shortenAddress(event.AssetCreated.author)}</Link>
                                     </Typography>
                                     <Box sx={{ maxHeight: 150, overflowY: 'auto', pr: 0.5, fontSize: '0.875rem', '&::-webkit-scrollbar': { width: '6px' }, '&::-webkit-scrollbar-thumb': { backgroundColor: 'grey.400', borderRadius: '3px' } }}>
                                         {metadata.description}
@@ -251,8 +252,7 @@ function CardDetail({ contract, account }) {
                         <Stack spacing={2.5} sx={{ flexGrow: 1 }}>
                             <Paper elevation={0} sx={{ p: { xs: 2, md: 2.5 }, border: '1px solid', borderColor: 'divider', borderRadius: 2 }}>
                                 <Link href="#" underline="hover" variant="body2" display="flex" alignItems="center" sx={{ color: 'primary.main', fontWeight: 'medium', mb: 0.5 }}>
-                                         {/* Author (not owner) -- WRONG*/}
-                                    {`${metadata.name} #${tokenId}`} by {handleTrait("author", art.owner)}
+                                    {`${metadata.name} #${tokenId}`} by {handleTrait("author", event.AssetCreated.author)}
                                     <Box component="span" sx={{ ml: 0.5 }}>
                                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" clipRule="evenodd" d="M13.2239 6.13491L8.40633 2.01825C8.18073 1.82736 7.82854 1.82736 7.60294 2.01825L2.78538 6.13491C2.56855 6.31809 2.52008 6.63111 2.67002 6.86368L2.67679 6.87286C2.82761 7.1069 3.13125 7.17032 3.37379 7.03688L3.38038 7.03268L7.40584 3.67752V10.8998C7.40584 11.176 7.62988 11.3999 7.90609 11.3999C8.1823 11.3999 8.40633 11.176 8.40633 10.8998V3.67752L12.4241 7.03268L12.4319 7.03688C12.6744 7.17032 12.9781 7.1069 13.1289 6.87286L13.1357 6.86368C13.2856 6.63111 13.2371 6.31809 13.0203 6.13491H13.0203L13.2239 6.13491ZM8.00463 14C10.2137 14 12.0046 12.2091 12.0046 10C12.0046 9.72386 11.7806 9.5 11.5044 9.5C11.2282 9.5 11.0042 9.72386 11.0042 10C11.0042 11.6569 9.66149 13 8.00463 13C6.34778 13 5.00488 11.6569 5.00488 10C5.00488 9.72386 4.78084 9.5 4.50463 9.5C4.22842 9.5 4.00438 9.72386 4.00438 10C4.00438 12.2091 5.79528 14 8.00463 14Z" fill="currentColor"></path></svg>
                                     </Box>
@@ -294,9 +294,7 @@ function CardDetail({ contract, account }) {
 
                             <Paper elevation={1} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 2, overflow: 'hidden' }}>
                                 <AccordionSection id="events" title="Events" icon={<EventIcon fontSize="small" color="action" />}>
-                                    <EmptyState
-                                        primaryText="No listings yet."
-                                    />
+                                    <EventStats event={event} account={account}/>
                                 </AccordionSection>
                             </Paper>
                         </Stack>

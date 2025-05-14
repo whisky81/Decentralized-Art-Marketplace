@@ -4,7 +4,6 @@ import ArtTrackIcon from '@mui/icons-material/ArtTrack';
 import { useState, useEffect } from "react";
 import { Link } from 'react-router-dom';
 
-
 export default function Navbar({ contract, account }) {
     const [info, setInfo] = useState(null);
     useEffect(() => {
@@ -27,6 +26,7 @@ export default function Navbar({ contract, account }) {
       <Toolbar sx={{ justifyContent: "space-between" }}>
         <Stack direction="row" alignItems="center" spacing={1}>
           <ArtTrackIcon />
+
           <Typography variant="h6" sx={{ fontWeight: "bold" }}>
             Decentralized Art Market ({info && info.name} - {info && info.symbol})
           </Typography>
@@ -35,7 +35,7 @@ export default function Navbar({ contract, account }) {
           <Link to="/"><Button variant="outlined" sx={{ mx: 1 }}>ART GALLERY</Button></Link>
           <Link to="/create"><Button variant="outlined" sx={{ mx: 1 }}>PUBLISH YOUR ART</Button></Link>
           <Link to={`/${account}`}><Button variant="outlined" sx={{ mx: 1 }}>MY WALLET INFO</Button></Link>
-          <Button variant="outlined" sx={{ mx: 1 }}>Guide</Button>
+          <Link to="/guide"><Button variant="outlined" sx={{ mx: 1 }}>Guide</Button></Link>
         </Box>
       </Toolbar>
     </AppBar>

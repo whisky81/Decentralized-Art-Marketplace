@@ -176,3 +176,72 @@ export function isOwnerOf(contract, tokenId, account) {
         }
     });
 }
+
+
+export function events(contract, tokenId) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let filter;
+      let events; 
+      const res = {
+        "AssetCreated": {},
+        "AssetSold": [],
+        "AssetResell": []
+      };
+
+      if ("AssetCreated" in contract.filters) {
+        filter = contract.filters.AssetCreated();
+        events = await contract.queryFilter(filter, 0, "latest"); // 0: tokenId 1: price 2: metadataURI 3:author {events}
+        if (events.length) {
+          for (const event of events) {
+            if (event.args[0].toString() === tokenId) {
+              res["AssetCreated"] = {
+                tokenId: event.args[0].toString(),
+                price: ethers.formatEther(event.args[1].toString()),
+                metadataURI: event.args[2],
+                author: event.args[3] 
+              };
+              break;
+            }
+          }
+        }
+      } 
+      if ("AssetSold" in contract.filters) {
+        filter = contract.filters.AssetSold();
+        events = await contract.queryFilter(filter, 0, "latest");
+        if (events.length) {
+          for (const event of events) {
+            if (event.args[0].toString() === tokenId) {
+              res["AssetSold"].push({
+                tokenId: event.args[0].toString(),
+                price: ethers.formatEther(event.args[1].toString()),
+                metadataURI: event.args[2],
+                owner: event.args[3],
+                buyer: event.args[4] 
+              });
+            } 
+          }
+        }
+      }
+      if ("AssetResell" in contract.filters) {
+        filter = contract.filters.AssetResell(); 
+        events = await contract.queryFilter(filter, 0, "latest");
+        if (events.length) {
+          for (const event of events) {
+            if (event.args[0].toString() === tokenId) {
+              res["AssetResell"].push({
+                tokenId: event.args[0].toString(),
+                status: Number(event.args[1]) === 0, 
+                price: ethers.formatEther(event.args[2].toString())
+              });
+            } 
+          }
+        }
+      }
+
+      resolve(res);
+    } catch(error) {
+      reject(error.message);
+    }
+  });
+}
