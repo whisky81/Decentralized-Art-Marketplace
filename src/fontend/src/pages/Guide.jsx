@@ -52,7 +52,7 @@ export default function Guide() {
 
   return (
     <Box p={2} sx={{ backgroundColor: '#f1eae5', minHeight: '100vh' }}>
-      {/* Metadata URI List */}
+      <p>Make another account page + check metadata structure before upload to the blockchain network</p>
       <Card sx={{ mb: 4 }}>
         <CardContent>
           <Typography variant="h6" gutterBottom>
@@ -91,7 +91,6 @@ export default function Guide() {
         </CardContent>
       </Card>
 
-      {/* IPFS Services */}
       <Card sx={{ mb: 4 }}>
         <CardContent>
           <Typography variant="h6" gutterBottom>
@@ -120,7 +119,6 @@ export default function Guide() {
         </CardContent>
       </Card>
 
-      {/* Metadata Format Example */}
       <Card>
         <CardContent>
           <Typography variant="h6" gutterBottom>
