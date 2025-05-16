@@ -52,7 +52,7 @@ export default function Guide() {
 
   return (
     <Box p={2} sx={{ backgroundColor: '#f1eae5', minHeight: '100vh' }}>
-      <p>Make another account page + check metadata structure before upload to the blockchain network</p>
+      <p>Make another account page + check metadata structure before upload to the blockchain network + {"send value <= msg.sender.balance"}</p>
       <Card sx={{ mb: 4 }}>
         <CardContent>
           <Typography variant="h6" gutterBottom>

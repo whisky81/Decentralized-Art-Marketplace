@@ -1,44 +1,43 @@
-import { artGallery, shortenAddress, events } from "../api/utils";
-import { useState, useEffect, useMemo } from "react";
+import { artGallery, shortenAddress } from "../api/utils";
+import { useState, useEffect } from "react";
 import Loading from "../components/Loading";
-import MyCard from "../components/Card";
+import Card from "../components/Card";
 import { Avatar, Box, Button, CardHeader, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import { Link } from "react-router-dom";
 export default function ArtGallery({ contract, account }) {
     const [arts, setArts] = useState();
     const [filteredArts, setFilteredArts] = useState();
     const [search, setSearch] = useState();
-    const [sortOption, setSortOption] = useState();
+    const [sortOption, setSortOption] = useState('none');
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const tmp = await artGallery(contract); 
+                const tmp = await artGallery(contract);
                 setArts(tmp);
                 setFilteredArts(tmp);
             } catch (error) {
                 alert(error.message);
             }
         }
-
         fetchData();
     }, []);
 
     const handleClick = () => {
         let res = [...arts];
-        
+
         if (search) {
             res = arts.filter((art) => (
-            art.tokenId === search || art.owner.toLowerCase().includes(search.toLowerCase()) 
-        ));
+                art.tokenId === search || art.owner.toLowerCase().includes(search.toLowerCase()) || (art.name.toLowerCase().includes(search.toLowerCase()))
+            ));
         }
-        
+
 
         if (sortOption === "price-asc") {
             res.sort((a, b) => Number(a.price) - Number(b.price));
         } else if (sortOption === "price-desc") {
             res.sort((a, b) => Number(b.price) - Number(a.price));
         }
-        setFilteredArts(res); 
+        setFilteredArts(res);
     }
 
 
@@ -50,9 +49,10 @@ export default function ArtGallery({ contract, account }) {
         <>
             <Box display="flex" gap={2} bgcolor="#f7f0eb" p={2}>
                 <TextField
-                    label="Search by Token Id Or Address"
+                    label="Search by Token Id/ Name/ Address"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
+                    sx={{ width: '40%'}}
                 />
                 <FormControl sx={{ minWidth: 150 }}>
                     <InputLabel>Sort</InputLabel>
@@ -64,13 +64,15 @@ export default function ArtGallery({ contract, account }) {
                         <MenuItem value="none">None</MenuItem>
                         <MenuItem value="price-asc">Price ↑</MenuItem>
                         <MenuItem value="price-desc">Price ↓</MenuItem>
+                        <MenuItem value="name-az">A-Z</MenuItem>
+                        <MenuItem value="name-z-a">Z-A</MenuItem>
                     </Select>
                 </FormControl>
                 <Button onClick={handleClick} sx={{
-    border: '1px solid #1976d2', 
-    color: '#1976d2',             
-    ml: 2                         
-  }}>Find</Button>
+                    border: '1px solid #1976d2',
+                    color: '#1976d2',
+                    ml: 2
+                }}>Find</Button>
             </Box>
             <Box
                 minHeight="100vh"
@@ -82,7 +84,7 @@ export default function ArtGallery({ contract, account }) {
             >
                 <Box display="flex" flexWrap="wrap" gap={2}>
                     {filteredArts.map(art => (
-                        <div>
+                        <div key={art.tokenId}>
                             <Link to={`/${art.owner}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                                 <CardHeader
                                     title={account === art.owner ? "You" : shortenAddress(art.owner)}
@@ -92,7 +94,7 @@ export default function ArtGallery({ contract, account }) {
                                         </Avatar>
                                     }
                                 /></Link>
-                            <Link to={`/nft/${art.tokenId}`} style={{ textDecoration: 'none', color: 'inherit' }}><MyCard key={art.tokenId} art={art} account={account} /></Link>
+                            <Link to={`/nft/${art.tokenId}`} style={{ textDecoration: 'none', color: 'inherit' }}><Card key={art.tokenId} art={art} account={account} /></Link>
                         </div>
                     ))}
                 </Box>

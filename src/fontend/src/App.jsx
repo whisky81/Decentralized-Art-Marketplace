@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import getEthersProvider from './api/getEthersProvider';
-import getContract from './api/getContract';
+import { getEthersProvider, getContract } from './api/utils';
 import NavBar from './components/NavBar';
 import Loading from './components/Loading';
 import PublicArt from './pages/PublicArt';

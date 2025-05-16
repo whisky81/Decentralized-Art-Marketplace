@@ -2,11 +2,13 @@ import Card from '@mui/material/Card';
 import { CardContent, CardMedia, Typography } from "@mui/material";
 import { useState, useEffect } from 'react';
 import Loading from './Loading';
-import { ethers } from 'ethers';
 import ForSale from './ForSale';
 import NotForSale from './NotForSale';
 export default function MyCard({ art, account }) {
     const [metadata, setMetadata] = useState();
+    const getDate = (timestamp) => {
+        return (new Date(timestamp)).toDateString(); 
+    }
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -34,9 +36,10 @@ export default function MyCard({ art, account }) {
                 <CardContent>
                     <h3>{metadata.name}</h3>
                     <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                        Price: {ethers.formatEther(art.price)} ETH
+                        Price: {art.price} ETH
                     </Typography> 
-                    {art.isAvailable ? <ForSale /> : <NotForSale />}
+                    {art.status ? <ForSale /> : <NotForSale />}
+                    <small>Creation Date: {getDate(art.timestamp)}</small>
                 </CardContent>
         </Card>
     )

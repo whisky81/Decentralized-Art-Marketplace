@@ -143,13 +143,8 @@ contract Whisky is ERC721 {
         public
         view
         isAvailable(_tokenId)
-        exist(_tokenId) //     uint256[] memory tokenIds = new uint256[](balanceOf(msg.sender));
+        exist(_tokenId) 
         returns (
-            //     uint256[] memory prices = new uint256[](balanceOf(msg.sender));
-            //     string[] memory metadataURIs = new string[](balanceOf(msg.sender));
-            //     AssetStatus[] memory statuses = new AssetStatus[](
-            //         balanceOf(msg.sender)
-            //     );
             ReturnedAsset memory
         )
     {

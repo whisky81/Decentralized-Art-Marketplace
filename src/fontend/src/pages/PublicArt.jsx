@@ -6,22 +6,20 @@ import {
     Button,
 } from "@mui/material";
 import { publicNewArtwork, parseUnits } from '../api/utils.js';
-import { ethers } from 'ethers';
 import { Link, useNavigate } from "react-router-dom";
 import Value from "../components/Value.jsx";
-
-const unitOptions = ["wei", "gwei", "finney", "ether"];
 
 export default function PublicArt({ contract }) {
     const [price, setPrice] = useState("0");
     const [unit, setUnit] = useState("wei");
     const [metadataURI, setMetadataURI] = useState("");
+    const [name, setName] = useState(""); 
     const navigate = useNavigate();
 
     const handleSubmit = async () => {
         try {
             let weiAmount = parseUnits(unit, price); 
-            const receipt = await publicNewArtwork(contract, weiAmount, metadataURI);
+            const receipt = await publicNewArtwork(contract, weiAmount, metadataURI, name);
             console.log(receipt);
             navigate("/"); 
         } catch (error) {
@@ -51,6 +49,13 @@ export default function PublicArt({ contract }) {
                 }}
             >
                 <Value price={price} setUnit={setUnit} setPrice={setPrice} unit={unit}/>
+                {/* NAME FIELD */}
+                <div>
+                    <Typography variant="subtitle2" sx={{ fontWeight: "bold", color: "#003300" }}>
+                    NAME 
+                </Typography>
+                <TextField fullWidth placeholder="Name of Token" value={name} onChange={(e) => setName(e.target.value)}/>
+                </div>
 
                 {/* METADATA */}
                 <Typography variant="subtitle2" sx={{ fontWeight: "bold", color: "#003300" }}>
@@ -75,6 +80,7 @@ export default function PublicArt({ contract }) {
                     </ul>
                     For step-by-step guidance, please refer to our <Link to="/guide">IPFS Upload Guide</Link> that covers the entire process in detail.
                 </p>
+
                 {/* check metadata struct before send*/}
                 <Button variant="contained" color="primary" onClick={handleSubmit}>
                     Submit
