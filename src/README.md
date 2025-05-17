@@ -1,65 +1,89 @@
+---
+
 # Hướng dẫn Chạy Demo Dự án
-## Yêu cầu Cài đặt (Quan trọng)
-1.  **Node.js**: Đây là môi trường để chạy mã JavaScript phía máy chủ.
-    * Truy cập [https://nodejs.org/](https://nodejs.org/) để tải về và cài đặt phiên bản Node.js phù hợp với hệ điều hành của bạn. Chúng tôi khuyến nghị sử dụng phiên bản LTS (Long Term Support) mới nhất.
-2.  **npm (Node Package Manager)**: npm thường được cài đặt kèm với Node.js. Đây là công cụ giúp bạn quản lý các thư viện (packages) cần thiết cho dự án.
-    * Sau khi cài đặt Node.js, bạn có thể kiểm tra phiên bản npm bằng cách mở terminal (hoặc Command Prompt/PowerShell trên Windows) và gõ lệnh: `npm -v`
-3.  **MetaMask Extension**: Đây là một ví tiền điện tử dưới dạng tiện ích mở rộng cho trình duyệt, giúp bạn tương tác với các ứng dụng phi tập trung (DApps).
-    * Truy cập [https://metamask.io/](https://metamask.io/) và làm theo hướng dẫn để cài đặt MetaMask cho trình duyệt của bạn (ví dụ: Chrome, Firefox, Brave, Edge).
+
+## Yêu cầu Cài đặt
+
+1.  **Node.js (LTS mới nhất)**: Môi trường chạy JavaScript. Tải tại [nodejs.org](https://nodejs.org/).
+    *   Sau khi cài, mở Terminal (hoặc Command Prompt/PowerShell) và kiểm tra:
+        ```bash
+        node -v
+        npm -v
+        ```
+2.  **MetaMask Extension**: Ví điện tử để tương tác DApp. Cài cho trình duyệt tại [metamask.io](https://metamask.io/).
 
 ## Chạy Demo
 
-Sau khi đã hoàn tất các yêu cầu cài đặt ở trên, bạn có thể tiến hành chạy demo theo các bước sau:
+### 1. Khởi chạy Local Node (Blockchain cục bộ)
 
-### Phần 1: Khởi chạy Local Node (Môi trường Blockchain cục bộ)
-
-Bước này sẽ thiết lập một blockchain giả lập trên máy tính của bạn để thử nghiệm.
-
-1.  **Cài đặt các thư viện cần thiết cho Local Node:**
-    * Mở terminal của bạn.
-    * Di chuyển đến thư mục gốc của dự án.
-    * Chạy lệnh sau để tải về và cài đặt các gói phụ thuộc được định nghĩa trong file `package.json`:
+1.  **Cài đặt thư viện dự án:**
+    *   Mở Terminal, di chuyển đến thư mục gốc của dự án.
+    *   Chạy lệnh:
         ```bash
         npm install
         ```
-        *Lưu ý:* Lệnh này thường được viết tắt là `npm i`.
 
-2.  **Khởi động Local Node với Hardhat:**
-    * Vẫn trong terminal tại thư mục gốc của dự án, chạy lệnh:
+2.  **Khởi động Local Node:**
+    *   Tại thư mục gốc dự án, chạy:
         ```bash
         npx hardhat node
         ```
-    * Lệnh này sẽ khởi chạy một phiên bản Hardhat Network cục bộ, mô phỏng một mạng Ethereum trên máy của bạn. Bạn sẽ thấy danh sách các tài khoản thử nghiệm và private key của chúng (tuyệt đối không sử dụng các private key này cho tài sản thật).
+    *   Lệnh này sẽ khởi chạy một mạng Ethereum giả lập. Bạn sẽ thấy danh sách các tài khoản thử nghiệm (Account #0, Account #1,...) và **Private Key** tương ứng của chúng.
+    *   **Quan trọng:** Giữ Terminal này mở trong suốt quá trình demo.
 
-3.  **Triển khai Smart Contract lên Local Node:**
-    * Mở một **terminal mới** (giữ nguyên terminal đang chạy `npx hardhat node`).
-    * Di chuyển đến thư mục gốc của dự án trong terminal mới này.
-    * Chạy lệnh sau để triển khai smart contract có tên `Whisky.js` (nằm trong thư mục `ignition/modules/`) lên mạng cục bộ (`localhost`) mà bạn vừa khởi chạy:
+3.  **Kết nối MetaMask với Local Node và Import Tài khoản Thử Nghiệm:**
+    *   Mở MetaMask trên trình duyệt của bạn.
+    *   **Thêm mạng Hardhat Localhost (nếu chưa có):**
+        *   Nhấp vào danh sách mạng hiện tại (thường là "Ethereum Mainnet").
+        *   Chọn "Add network" (Thêm mạng).
+        *   Nếu thấy tùy chọn "Add a network manually" (Thêm mạng thủ công), hãy chọn nó.
+        *   Điền thông tin sau:
+            *   Network Name (Tên mạng): `Hardhat Localhost` (hoặc tên tùy ý)
+            *   New RPC URL (URL RPC mới): `http://127.0.0.1:8545`
+            *   Chain ID (ID chuỗi): `31337`
+            *   Currency Symbol (Ký hiệu tiền tệ - tùy chọn): `ETH`
+        *   Nhấp "Save" (Lưu). MetaMask sẽ tự động chuyển sang mạng này.
+    *   **Import tài khoản thử nghiệm vào MetaMask:**
+        *   Trong MetaMask, đảm bảo bạn đang ở mạng "Hardhat Localhost" vừa thêm.
+        *   Nhấp vào biểu tượng tài khoản (hình tròn) ở góc trên bên phải, sau đó chọn "Import account" (Nhập tài khoản).
+        *   Quay lại Terminal đang chạy `npx hardhat node`. **Copy một trong các giá trị "PRIVATE KEY"** (ví dụ: của Account #0).
+        *   Dán Private Key đã copy vào ô "Private Key" trong MetaMask và nhấp "Import".
+        *   Tài khoản này sẽ có sẵn ETH để thực hiện giao dịch trên mạng local.
+        *   **Lưu ý:** Tuyệt đối không sử dụng các private key này cho tài sản thật.
+
+4.  **Triển khai Smart Contract:**
+    *   Mở một **Terminal mới** (giữ nguyên Terminal đang chạy `npx hardhat node`).
+    *   Di chuyển đến thư mục gốc dự án trong Terminal mới này.
+    *   Chạy lệnh:
         ```bash
         npx hardhat ignition deploy ./ignition/modules/Whisky.js --network localhost
         ```
 
-### Phần 2: Khởi chạy Giao diện Người dùng (Frontend)
+### 2. Khởi chạy Giao diện Người dùng (Frontend)
 
-Bước này sẽ khởi động ứng dụng web để bạn có thể tương tác với smart contract đã triển khai.
-
-1.  **Cài đặt các thư viện cần thiết cho Frontend:**
-    * Mở terminal (có thể sử dụng lại terminal thứ hai hoặc mở một terminal mới).
-    * Di chuyển vào thư mục `frontend` của dự án:
+1.  **Cài đặt thư viện Frontend:**
+    *   Mở Terminal (có thể sử dụng lại Terminal thứ hai hoặc mở một Terminal mới).
+    *   Di chuyển vào thư mục `frontend` của dự án:
         ```bash
         cd frontend
         ```
-    * Chạy lệnh sau để tải về và cài đặt các gói phụ thuộc cho phần giao diện:
+    *   Chạy lệnh:
         ```bash
         npm install
         ```
-        *Lưu ý:* Lệnh này thường được viết tắt là `npm i`.
 
 2.  **Khởi chạy ứng dụng Frontend:**
-    * Vẫn trong terminal tại thư mục `frontend`, chạy lệnh:
+    *   Vẫn trong Terminal tại thư mục `frontend`, chạy lệnh:
         ```bash
         npm run dev
         ```
-    * Lệnh này sẽ khởi động một máy chủ phát triển cục bộ (development server) cho ứng dụng frontend. Sau khi quá trình biên dịch hoàn tất, bạn sẽ thấy một địa chỉ URL (thường là `http://localhost:xxxx` với `xxxx` là một số cổng, ví dụ `http://localhost:3000` hoặc `http://localhost:5173`) trong terminal.
-    * Mở trình duyệt web của bạn và truy cập vào địa chỉ URL đó để xem và tương tác với ứng dụng.
+    *   Mở trình duyệt web của bạn và truy cập vào địa chỉ URL hiển thị trong Terminal (thường là `http://localhost:xxxx`, ví dụ `http://localhost:3000` hoặc `http://localhost:5173`).
+    *   Khi được yêu cầu bởi trang web, hãy kết nối MetaMask và chọn tài khoản bạn vừa import để tương tác với ứng dụng.
+
+---
+
+**Lưu ý:**
+*   Cần giữ Terminal chạy `npx hardhat node` trong suốt quá trình demo để blockchain cục bộ hoạt động.
+*   Các private key từ `npx hardhat node` chỉ dành cho mục đích thử nghiệm trên mạng cục bộ, **không sử dụng cho tài sản thật**.
+
 ---
