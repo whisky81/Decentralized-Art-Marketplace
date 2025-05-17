@@ -22,7 +22,8 @@ function App() {
         setContract(await getContract(signer));
         setProvider(conn);
       } catch (error) {
-        alert(error.message);
+        console.log("ERROR IN App.jsx"); 
+        console.error(error);
       }
     }
     init();
@@ -33,7 +34,6 @@ function App() {
 
   return (
     <>
-      
       <BrowserRouter>
         <NavBar contract={contract} account={account}/>
         <Routes>
@@ -47,7 +47,6 @@ function App() {
           <Route path="/guide" element={<Guide />}/>
         </Routes>
       </BrowserRouter>
-
     </>
   );
 }

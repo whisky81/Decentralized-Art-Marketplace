@@ -350,11 +350,11 @@ export function events(contract, tokenId) {
       const res = {
         AssetCreated: [],
         AssetSold: [],
-        AssetResell: [],
+        AssetResell: []
       };
-      res["AssetCreated"] = handleEvent(contract, tokenId, "AssetCreated");
-      res["AssetSold"] = handleEvent(contract, tokenId, "AssetSold");
-      res["AssetResell"] = handleEvent(contract, tokenId, "AssetResell");
+      res["AssetCreated"] = await handleEvent(contract, tokenId, "AssetCreated");
+      res["AssetSold"] = await handleEvent(contract, tokenId, "AssetSold");
+      res["AssetResell"] = await handleEvent(contract, tokenId, "AssetResell");
       resolve(res);
     } catch (error) {
       reject(error.message);
