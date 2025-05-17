@@ -10,6 +10,10 @@ function ValueDialog({ account, open, setOpen, tokenId, contract, p, msg }) {
     const navigate = useNavigate();
     const handleClick = async () => {
         try {
+            if (price < 0) {
+                throw new Error("The Price must be greater than 0");
+            }
+        
             if (msg !== "Buy") {
 
                 await changeOrResell(contract, tokenId, parseUnits(unit, price));

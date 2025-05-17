@@ -20,6 +20,7 @@ export default function Value({ price, setUnit, setPrice, unit }) {
                 type="number"
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
+                inputProps={{ min: 0 }}
                 endAdornment={
                     <InputAdornment position="end">
                         <Select

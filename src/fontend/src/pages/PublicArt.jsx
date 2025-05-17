@@ -20,6 +20,9 @@ export default function PublicArt({ contract }) {
 
     const handleSubmit = async () => {
         try {
+            if (BigInt(price) < 0n) {
+                throw new Error("The Price must be greater than 0");
+            }
             let weiAmount = parseUnits(unit, price); 
             const receipt = await publicNewArtwork(contract, weiAmount, metadataURI);
             console.log(receipt);
