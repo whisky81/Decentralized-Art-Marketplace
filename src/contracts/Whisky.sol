@@ -71,12 +71,12 @@ contract Whisky is ERC721 {
     constructor() ERC721("Whisky", "WHSKY") {}
 
     modifier isAvailable(uint256 _tokenId) {
-        require(_assets[_tokenId].status == AssetStatus.Available);
+        require(_assets[_tokenId].status == AssetStatus.Available, "Token not available");
         _;
     }
 
     modifier exist(uint256 _tokenId) {
-        require(_exists(_tokenId));
+        require(_exists(_tokenId), "Query non-exist token");
         _;
     }
 
@@ -142,7 +142,6 @@ contract Whisky is ERC721 {
     )
         public
         view
-        isAvailable(_tokenId)
         exist(_tokenId) 
         returns (
             ReturnedAsset memory

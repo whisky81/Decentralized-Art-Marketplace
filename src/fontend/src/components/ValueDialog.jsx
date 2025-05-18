@@ -15,7 +15,8 @@ function ValueDialog({ account, open, setOpen, tokenId, contract, p, msg }) {
                 await changeOrResell(contract, tokenId, parseUnits(unit, price));
             } else {
                 await buy(contract, tokenId, parseUnits(unit, price));
-                if (await isOwnerOf(contract, tokenId, account)) {
+                const ok = await isOwnerOf(contract, tokenId, account);
+                if (ok) {
                     alert("SUCCESS");
                 } else {
                     alert("Transaction failed due to insufficient balance");

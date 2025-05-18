@@ -38,16 +38,11 @@ import HistoryIcon from '@mui/icons-material/History';
 import { getArtworkByTokenId, shortenAddress, changeOrResell, events } from '../api/utils';
 import { useParams, Link } from 'react-router-dom';
 import Loading from './Loading';
-import EmptyState from './EmptyState';
 import SendIcon from '@mui/icons-material/Send';
 import ValueDialog from './ValueDialog';
 import PriceChart from './PriceChart';
 import TransferHistory from './TransferHistory';
 import EventStats from './EventStats';
-const traits = [
-    { label: 'FAKE CHAIR (TEST)', value: 'All Fake Chair (Test)s', percentage: '22%' },
-    { label: 'Floor', value: '--', percentage: null },
-];
 
 function CardDetail({ contract, account }) {
     const { tokenId } = useParams();
@@ -69,13 +64,19 @@ function CardDetail({ contract, account }) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                setEvent(await events(contract, tokenId));
+                const evts = await events(contract, tokenId);
+                setEvent(evts);
                 const res = await getArtworkByTokenId(contract, tokenId);
                 const response = await fetch(res.metadataURI);
                 const data = await response.json();
                 setMetadata(data);
                 setArt(res);
+
+                console.log("EVENTS", evts);
+                console.log("ART", res);
+                console.log("METADATA", data);
             } catch (error) {
+                console.error(error);
                 alert(error.message);
             }
         }

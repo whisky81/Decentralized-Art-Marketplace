@@ -32,10 +32,21 @@ export default function ArtGallery({ contract, account }) {
         }
 
 
-        if (sortOption === "price-asc") {
-            res.sort((a, b) => Number(a.price) - Number(b.price));
-        } else if (sortOption === "price-desc") {
-            res.sort((a, b) => Number(b.price) - Number(a.price));
+        switch (sortOption) {
+            case "price-asc":
+                res.sort((a, b) => Number(a.price) - Number(b.price));
+            break;
+            case "price-desc":
+                res.sort((a, b) => Number(b.price) - Number(a.price));
+            break;
+            case "name-az":
+                res.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+            break;
+            case "name-za":
+                res.sort((a, b) => -1 * a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+            break;
+            default:
+            break;
         }
         setFilteredArts(res);
     }
@@ -65,7 +76,7 @@ export default function ArtGallery({ contract, account }) {
                         <MenuItem value="price-asc">Price ↑</MenuItem>
                         <MenuItem value="price-desc">Price ↓</MenuItem>
                         <MenuItem value="name-az">A-Z</MenuItem>
-                        <MenuItem value="name-z-a">Z-A</MenuItem>
+                        <MenuItem value="name-za">Z-A</MenuItem>
                     </Select>
                 </FormControl>
                 <Button onClick={handleClick} sx={{

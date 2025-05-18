@@ -60,7 +60,7 @@ export function getEthersProvider() {
       } catch (error) {
         // Catch any unexpected errors during provider setup
         console.error("Error initializing ethers provider:", error);
-        reject(error);
+        reject(new Error(error?.reason || "Transaction Failed"));
       }
     }); // End of window.addEventListener
 
@@ -77,7 +77,7 @@ export function getContract(signer) {
       const contract = new ethers.Contract(contractAddress, Whisky.abi, signer);
       resolve(contract);
     } catch (error) {
-      reject(error);
+      reject(new Error(error?.reason || "Transaction Failed"));
     }
   });
 }
@@ -94,7 +94,7 @@ export function publicNewArtwork(contract, price, metadataURI, name) {
         reject(new Error("Transaction failed"));
       }
     } catch (error) {
-      reject(error);
+      reject(new Error(error?.reason || "Transaction Failed"));
     }
   });
 }
@@ -149,7 +149,7 @@ function checkMetadata(metadataURI) {
       }
       resolve();
     } catch (error) {
-      reject(error.message);
+      reject(new Error(error?.reason || "Transaction Failed"));
     }
   });
 }
@@ -164,7 +164,7 @@ export function artGallery(contract) {
       }
       resolve(res);
     } catch (error) {
-      reject(error);
+      reject(new Error(error?.reason || "Transaction Failed"));
     }
   });
 }
@@ -175,7 +175,7 @@ export function getArtworkByTokenId(contract, tokenId) {
       const res = Array.from(await contract.findAsset(tokenId));
       resolve(handleReturnedAsset(res));
     } catch (error) {
-      reject(error.message);
+      reject(new Error(error?.reason || "Transaction Failed"));
     }
   });
 }
@@ -190,7 +190,7 @@ export function getMyArts(contract) {
       }
       resolve(res);
     } catch (error) {
-      reject(error.message);
+      reject(new Error(error?.reason || "Transaction Failed"));
     }
   });
 }
@@ -206,7 +206,7 @@ export function transfer(contract, account, to, tokenId) {
         reject(new Error("Transaction failed"));
       }
     } catch (error) {
-      reject(error.message);
+      reject(new Error(error?.reason || "Transaction Failed"));
     }
   });
 }
@@ -217,6 +217,9 @@ export function shortenAddress(address) {
 
 export function changeOrResell(contract, tokenId, price) {
   return new Promise(async (resolve, reject) => {
+    // if (BigInt(price) <= 0n) {
+    //     reject(new Error("The Value must be greater than 0"));
+    //   }
     try {
       const tx = await contract.resellAsset(BigInt(tokenId), BigInt(price));
       const receipt = await tx.wait();
@@ -226,7 +229,7 @@ export function changeOrResell(contract, tokenId, price) {
         reject(new Error("Transaction failed"));
       }
     } catch (error) {
-      reject(error.message);
+      reject(new Error(error?.reason || "Transaction Failed"));
     }
   });
 }
@@ -241,6 +244,10 @@ export function parseUnits(unit, price) {
 export function buy(contract, tokenId, price) {
   return new Promise(async (resolve, reject) => {
     try {
+      // if (BigInt(price) <= 0n) {
+      //   reject(new Error("The Value must be greater than 0"));
+      // }
+
       const tx = await contract.buyAsset(BigInt(tokenId), {
         value: price,
       });
@@ -255,7 +262,7 @@ export function buy(contract, tokenId, price) {
     } catch (error) {
       console.log("ERROR2");
       console.error(error);
-      reject(error.message);
+      reject(new Error(error?.reason || "Transaction Failed"));
     }
   });
 }
@@ -272,7 +279,7 @@ export function getTransferHistory(contract, tokenId) {
       }
       resolve(res);
     } catch (error) {
-      reject(error.message);
+      reject(new Error(error?.reason || "Transaction Failed"));
     }
   });
 }
@@ -283,7 +290,7 @@ export function isOwnerOf(contract, tokenId, account) {
       const owner = await contract.ownerOf(BigInt(tokenId));
       resolve(owner.toLowerCase() === account.toLowerCase());
     } catch (error) {
-      reject(error.message);
+      reject(new Error(error?.reason || "Transaction Failed"));
     }
   });
 }
@@ -319,7 +326,7 @@ function handleAssetResellEvent(obj) {
 
 async function handleEvent(contract, tokenId, eventName) {
   const res = [];
-  if (contract.filters.hasOwnProperty(eventName)) {
+  if (eventName in contract.filters) {
     const filter = contract.filters[eventName]();
     const events = await contract.queryFilter(filter, 0, "latest");
     if (events.length) {
@@ -352,12 +359,12 @@ export function events(contract, tokenId) {
         AssetSold: [],
         AssetResell: []
       };
-      res["AssetCreated"] = await handleEvent(contract, tokenId, "AssetCreated");
+      res["AssetCreated"] = (await handleEvent(contract, tokenId, "AssetCreated"))[0];
       res["AssetSold"] = await handleEvent(contract, tokenId, "AssetSold");
       res["AssetResell"] = await handleEvent(contract, tokenId, "AssetResell");
       resolve(res);
     } catch (error) {
-      reject(error.message);
+      reject(new Error(error?.reason || "Transaction Failed"));
     }
   });
 }

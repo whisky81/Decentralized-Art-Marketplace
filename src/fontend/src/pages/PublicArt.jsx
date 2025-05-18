@@ -68,7 +68,7 @@ export default function PublicArt({ contract }) {
                     value={metadataURI}
                     onChange={(e) => setMetadataURI(e.target.value)}
                 />
-                <p style={{ fontSize: '0.9rem', color: '#555' }}>
+                <div style={{ fontSize: '0.9rem', color: '#555' }}>
                     Enter the full URL to your metadata file (typically a .json file hosted on IPFS). You can upload your metadata to IPFS using decentralized storage services like:
                     <ul>
                         <li><a href="https://pinata.cloud/">Pinata</a></li>
@@ -79,7 +79,7 @@ export default function PublicArt({ contract }) {
                         <li>...</li>
                     </ul>
                     For step-by-step guidance, please refer to our <Link to="/guide">IPFS Upload Guide</Link> that covers the entire process in detail.
-                </p>
+                </div>
 
                 {/* check metadata struct before send*/}
                 <Button variant="contained" color="primary" onClick={handleSubmit}>

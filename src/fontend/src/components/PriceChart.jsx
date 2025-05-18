@@ -49,9 +49,8 @@ const PriceChart = ({ contract, tokenId }) => {
                 const chartValues = [];
                 for (const tx of transactions) {
                     if (!tx.status) continue; 
-                    const dateFormat = new Date(tx.timestamp * 1000);
                     chartValues.push({
-                        date: dateFormat.toLocaleDateString(),
+                        date: (new Date(tx.timestamp)).toLocaleDateString(),
                         price: tx.price,
                         seller: tx.seller,
                         buyer: tx.buyer
