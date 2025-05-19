@@ -6,7 +6,10 @@ import { getMyArts } from "../api/utils";
 import { Box } from "@mui/material";
 import MyCard from "../components/Card";
 import AnotherAccount from "./AnotherAccount";
-export default function MyWalletInfo({ contract, provider }) {
+import { usePE } from "../hooks/usePE";
+
+export default function MyWalletInfo() {
+    const { contract, provider } = usePE();
     const { account } = useParams();
     const [data, setData] = useState();
     const [arts, setArts] = useState();

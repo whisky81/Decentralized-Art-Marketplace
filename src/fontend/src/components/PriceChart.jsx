@@ -6,6 +6,7 @@ import {
 import { getTransferHistory } from '../api/utils';
 import { Link, useNavigate } from 'react-router-dom';
 import EmptyData from './EmptyData';
+import { usePE } from '../hooks/usePE';
 const CustomTooltip = ({ active, payload, label }) => {
     const navigate = useNavigate();
 
@@ -37,8 +38,8 @@ const shortenAddress = (address) => {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
 };
 
-const PriceChart = ({ contract, tokenId }) => {
-
+const PriceChart = ({ tokenId }) => {
+    const { contract } = usePE()
     const [transferHistory, setTransferHistory] = useState();
     const [data, setData] = useState();
 

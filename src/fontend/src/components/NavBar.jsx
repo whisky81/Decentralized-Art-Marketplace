@@ -3,8 +3,10 @@ import { Stack } from "@mui/system";
 import ArtTrackIcon from '@mui/icons-material/ArtTrack'; 
 import { useState, useEffect } from "react";
 import { Link } from 'react-router-dom';
+import { usePE } from "../hooks/usePE";
 
-export default function Navbar({ contract, account }) {
+export default function Navbar() {
+    const { contract, account } = usePE();
     const [info, setInfo] = useState(null);
     useEffect(() => {
         const fetchData = async () => {
@@ -26,7 +28,6 @@ export default function Navbar({ contract, account }) {
       <Toolbar sx={{ justifyContent: "space-between" }}>
         <Stack direction="row" alignItems="center" spacing={1}>
           <ArtTrackIcon />
-
           <Typography variant="h6" sx={{ fontWeight: "bold" }}>
             Decentralized Art Market ({info && info.name} - {info && info.symbol})
           </Typography>

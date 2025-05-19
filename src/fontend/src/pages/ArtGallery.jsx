@@ -4,7 +4,10 @@ import Loading from "../components/Loading";
 import Card from "../components/Card";
 import { Avatar, Box, Button, CardHeader, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import { Link } from "react-router-dom";
-export default function ArtGallery({ contract, account }) {
+import { usePE } from "../hooks/usePE";
+
+export default function ArtGallery() {
+    const { contract, account } = usePE();
     const [arts, setArts] = useState();
     const [filteredArts, setFilteredArts] = useState();
     const [search, setSearch] = useState();
@@ -20,7 +23,7 @@ export default function ArtGallery({ contract, account }) {
             }
         }
         fetchData();
-    }, []);
+    }, [arts]);
 
     const handleClick = () => {
         let res = [...arts];
@@ -35,24 +38,24 @@ export default function ArtGallery({ contract, account }) {
         switch (sortOption) {
             case "price-asc":
                 res.sort((a, b) => Number(a.price) - Number(b.price));
-            break;
+                break;
             case "price-desc":
                 res.sort((a, b) => Number(b.price) - Number(a.price));
-            break;
+                break;
             case "name-az":
                 res.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
-            break;
+                break;
             case "name-za":
                 res.sort((a, b) => -1 * a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
-            break;
+                break;
             default:
-            break;
+                break;
         }
         setFilteredArts(res);
     }
 
 
-    if (!arts) {
+    if (!filteredArts) {
         return <Loading />;
     }
 
@@ -63,7 +66,7 @@ export default function ArtGallery({ contract, account }) {
                     label="Search by Token Id/ Name/ Address"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    sx={{ width: '40%'}}
+                    sx={{ width: '40%' }}
                 />
                 <FormControl sx={{ minWidth: 150 }}>
                     <InputLabel>Sort</InputLabel>
@@ -105,7 +108,7 @@ export default function ArtGallery({ contract, account }) {
                                         </Avatar>
                                     }
                                 /></Link>
-                            <Link to={`/nft/${art.tokenId}`} style={{ textDecoration: 'none', color: 'inherit' }}><Card key={art.tokenId} art={art} account={account} /></Link>
+                            <Link to={`/nft/${art.tokenId}`} style={{ textDecoration: 'none', color: 'inherit' }}><Card key={art.tokenId} art={art} /></Link>
                         </div>
                     ))}
                 </Box>

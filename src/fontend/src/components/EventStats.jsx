@@ -14,8 +14,10 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Link as RouterLink } from "react-router-dom";
 import { shortenAddress } from "../api/utils";
+import { usePE } from "../hooks/usePE";
 
-export default function EventStats({ event, account }) {
+export default function EventStats({ event }) {
+  const { account } = usePE() 
   const helper = (acc1, acc2) =>
     acc1.toLowerCase() === acc2.toLowerCase() ? "you" : shortenAddress(acc2);
 

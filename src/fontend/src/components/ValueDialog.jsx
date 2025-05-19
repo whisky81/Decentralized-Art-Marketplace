@@ -3,8 +3,9 @@ import { Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/
 import Value from './Value';
 import { useNavigate } from "react-router-dom";
 import { changeOrResell, parseUnits, buy, isOwnerOf } from "../api/utils";
-
-function ValueDialog({ account, open, setOpen, tokenId, contract, p, msg }) {
+import { usePE } from "../hooks/usePE";
+function ValueDialog({ open, setOpen, tokenId, p, msg }) {
+    const { account, contract } = usePE()
     const [price, setPrice] = useState(p);
     const [unit, setUnit] = useState("ether");
     const navigate = useNavigate();

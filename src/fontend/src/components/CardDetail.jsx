@@ -43,8 +43,10 @@ import ValueDialog from './ValueDialog';
 import PriceChart from './PriceChart';
 import TransferHistory from './TransferHistory';
 import EventStats from './EventStats';
+import { usePE } from '../hooks/usePE';
 
-function CardDetail({ contract, account }) {
+function CardDetail() {
+    const { contract, account } = usePE();
     const { tokenId } = useParams();
     const [art, setArt] = useState();
     const [metadata, setMetadata] = useState();
@@ -151,11 +153,9 @@ function CardDetail({ contract, account }) {
 
     if (open) {
         return <ValueDialog
-            account={account}
             open={open}
             setOpen={setOpen}
             tokenId={tokenId}
-            contract={contract}
             p={art.price}
             msg={art.owner === account ? (art.status ? "Change Price" : "Resell") : "Buy"} />;
     }
@@ -283,19 +283,19 @@ function CardDetail({ contract, account }) {
 
                             <Paper elevation={0} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 2, overflow: 'hidden' }}>
                                 <AccordionSection id="priceHistory" title="Price History" icon={<ShowChartIcon fontSize="small" color="action" />} defaultExpanded>
-                                    <PriceChart contract={contract} tokenId={tokenId}/>
+                                    <PriceChart tokenId={tokenId}/>
                                 </AccordionSection>
                             </Paper>
 
                             <Paper elevation={0} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 2, overflow: 'hidden' }}>
                                 <AccordionSection id="listings" title="Transaction History" icon={<HistoryIcon fontSize="small" color="action" />}>
-                                    <TransferHistory contract={contract} tokenId={tokenId}/>
+                                    <TransferHistory tokenId={tokenId}/>
                                 </AccordionSection>
                             </Paper>
 
                             <Paper elevation={1} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 2, overflow: 'hidden' }}>
                                 <AccordionSection id="events" title="Events" icon={<EventIcon fontSize="small" color="action" />}>
-                                    <EventStats event={event} account={account}/>
+                                    <EventStats event={event}/>
                                 </AccordionSection>
                             </Paper>
                         </Stack>

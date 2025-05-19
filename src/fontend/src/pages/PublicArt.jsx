@@ -8,8 +8,10 @@ import {
 import { publicNewArtwork, parseUnits } from '../api/utils.js';
 import { Link, useNavigate } from "react-router-dom";
 import Value from "../components/Value.jsx";
+import { usePE } from "../hooks/usePE.jsx";
 
-export default function PublicArt({ contract }) {
+export default function PublicArt() {
+    const { contract, signer, account, pinata } = usePE()
     const [price, setPrice] = useState("0");
     const [unit, setUnit] = useState("wei");
     const [metadataURI, setMetadataURI] = useState("");

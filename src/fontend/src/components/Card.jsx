@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Loading from './Loading';
 import ForSale from './ForSale';
 import NotForSale from './NotForSale';
-export default function MyCard({ art, account }) {
+export default function MyCard({ art }) {
     const [metadata, setMetadata] = useState();
     const getDate = (timestamp) => {
         return (new Date(timestamp)).toDateString(); 
@@ -20,7 +20,7 @@ export default function MyCard({ art, account }) {
             }
         }
         fetchData();
-    }, []);
+    }, [metadata]);
     if (!metadata) {
         return <Loading />;
     }

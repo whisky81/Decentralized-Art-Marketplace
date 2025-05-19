@@ -5,7 +5,9 @@ import {
 } from '@mui/material';
 import { getTransferHistory, shortenAddress } from '../api/utils';
 import EmptyData from './EmptyData';
-const TransferTable = ({ contract, tokenId }) => {
+import { usePE } from '../hooks/usePE';
+const TransferTable = ({ tokenId }) => {
+  const { contract } = usePE()
   const [transactions, setTransactions] = useState([]);
   const [filtered, setFiltered] = useState([]);
   const [statusFilter, setStatusFilter] = useState('');

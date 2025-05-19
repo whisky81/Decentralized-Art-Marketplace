@@ -13,11 +13,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'; // Trash icon
 import Loading from '../components/Loading';
 import { getArtworkByTokenId, transfer } from '../api/utils';
+import { usePE } from '../hooks/usePE';
 
-// Placeholder image URL - find one that resembles a portrait
-const nftImageUrl = 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cG9ydHJhaXR8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=120&h=180&q=80';
-
-function Transfer({ contract, account }) {
+function Transfer() {
+    const { contract, account } = usePE();
     const navigate = useNavigate();
     const { tokenId } = useParams();
     const [art, setArt] = useState();
