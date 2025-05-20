@@ -21,6 +21,8 @@ export const getHTTPGateway = (pinata, cid) => {
     try {
       resolve(await pinata.gateways.public.convert(cid));
     } catch (error) {
+      console.log("GET HTTP GATEWAY")
+      console.error(error)
       reject(error);
     }
   });
@@ -40,6 +42,8 @@ export const getMetadata = (pinata, cid) => {
       console.log(data) 
       resolve(data) 
     } catch (error) {
+      console.log("GET METADATA")
+      console.error(error)
       alert("Error: " + error.message);
     }
   });

@@ -1,5 +1,5 @@
 import { useParams, Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Loading from "../components/Loading";
 import { ethers } from "ethers";
 import { getMyArts } from "../api/utils";
@@ -49,7 +49,7 @@ export default function MyWalletInfo() {
         }
 
         fetchData();
-    }, []);
+    }, [contract]);
 
     if (!data || !arts) {
         return <Loading />;

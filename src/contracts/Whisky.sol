@@ -5,25 +5,6 @@ pragma solidity ^0.8.20;
 import {ERC721} from "./ERC721.sol";
 
 contract Whisky is ERC721 {
-    /**
-     * Format of metadata
-     * {
-     *  "name": "NFT Title",
-     *  "description": "NFT Description",
-     *  "image": "ipfs://",
-     *  "external_url": "https://example.com", 
-     *  "attributes": [
-     *     {
-     *      "trait_type": "Author",
-     *      "value": "0x123...789"
-     *     },
-     *     {
-     *      "trait_type": "Date",
-     *      "value": "123233"
-     *     },
-     *   ]
-     * }
-     */
     enum AssetStatus {
         Available,
         Archived

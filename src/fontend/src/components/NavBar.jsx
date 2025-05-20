@@ -1,28 +1,34 @@
 import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
 import { Stack } from "@mui/system";
 import ArtTrackIcon from '@mui/icons-material/ArtTrack'; 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Link } from 'react-router-dom';
 import { usePE } from "../hooks/usePE";
 
 export default function Navbar() {
-    const { contract, account } = usePE();
-    const [info, setInfo] = useState(null);
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setInfo({
-                    name: await contract.name(),
-                    symbol: await contract.symbol()
-                });
-            } catch (error) {
-                // alert(error.message);
-                console.error(error)
-            }
-        }
+  const { contract, account } = usePE();
+  const [info, setInfo] = useState({ name: "", symbol: "" });
 
-        fetchData();
-    }, []);
+  useEffect(() => {
+    let isMounted = true;
+    const fetchData = async () => {
+      try {
+        const [name, symbol] = await Promise.all([
+          contract.name(),
+          contract.symbol()
+        ]);
+        if (isMounted) setInfo({ name, symbol });
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    if (contract) fetchData();
+    return () => { isMounted = false; };
+  }, [contract]); // Only fetch if contract changes
+
+  const title = useMemo(() => {
+    return `Decentralized Art Market${info.name ? ` (${info.name} - ${info.symbol})` : ""}`;
+  }, [info.name, info.symbol]);
 
   return (
     <AppBar position="static" sx={{ backgroundColor: "#bfb6a8", color: "black", boxShadow: "none" }}>
@@ -30,7 +36,7 @@ export default function Navbar() {
         <Stack direction="row" alignItems="center" spacing={1}>
           <ArtTrackIcon />
           <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-            Decentralized Art Market ({info && info.name} - {info && info.symbol})
+            {title}
           </Typography>
         </Stack>
         <Box>

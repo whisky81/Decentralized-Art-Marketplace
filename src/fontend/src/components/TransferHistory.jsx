@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   Card, CardContent, Typography, Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Paper, TextField, MenuItem, Select, InputLabel, FormControl
@@ -6,47 +6,50 @@ import {
 import { getTransferHistory, shortenAddress } from '../api/utils';
 import EmptyData from './EmptyData';
 import { usePE } from '../hooks/usePE';
+
 const TransferTable = ({ tokenId }) => {
-  const { contract } = usePE()
+  const { contract } = usePE();
   const [transactions, setTransactions] = useState([]);
-  const [filtered, setFiltered] = useState([]);
   const [statusFilter, setStatusFilter] = useState('');
   const [search, setSearch] = useState('');
 
+  // Fetch only once per tokenId + contract
   useEffect(() => {
+    let isMounted = true;
     const fetchData = async () => {
-      const txs = await getTransferHistory(contract, tokenId);
-      setTransactions(txs);
-      setFiltered(txs);
+      try {
+        const txs = await getTransferHistory(contract, tokenId);
+        if (isMounted) setTransactions(txs);
+      } catch (err) {
+        console.error(err);
+      }
     };
-    fetchData();
+    if (contract && tokenId) fetchData();
+    return () => { isMounted = false; };
   }, [contract, tokenId]);
 
-  useEffect(() => {
+  // useMemo to filter only when inputs change
+  const filtered = useMemo(() => {
     let result = [...transactions];
     if (statusFilter) {
-      result = result.filter(tx => {
-        if (statusFilter === "success") {
-            return tx.status === true; 
-        }
-        return tx.status === false; 
-      });
+      result = result.filter(tx => statusFilter === 'success' ? tx.status : !tx.status);
     }
     if (search) {
+      const q = search.toLowerCase();
       result = result.filter(tx =>
-        tx.seller?.toLowerCase().includes(search.toLowerCase()) ||
-        tx.buyer?.toLowerCase().includes(search.toLowerCase())
+        tx.seller?.toLowerCase().includes(q) ||
+        tx.buyer?.toLowerCase().includes(q)
       );
     }
-    setFiltered(result);
-  }, [statusFilter, search, transactions]);
+    return result;
+  }, [transactions, statusFilter, search]);
+
+  const handleStatusChange = useCallback((e) => setStatusFilter(e.target.value), []);
+  const handleSearchChange = useCallback((e) => setSearch(e.target.value), []);
+
+  const formatDate = (ts) => new Date(ts * 1000).toLocaleString();
 
   if (!transactions.length) return <EmptyData />;
-
-  const formatDate = (ts) => {
-    const date = new Date(ts * 1000);
-    return date.toLocaleString();
-  };
 
   return (
     <Card>
@@ -60,14 +63,14 @@ const TransferTable = ({ tokenId }) => {
             label="Search Seller / Buyer"
             variant="outlined"
             value={search}
-            onChange={e => setSearch(e.target.value)}
+            onChange={handleSearchChange}
             fullWidth
           />
           <FormControl fullWidth>
             <InputLabel>Status</InputLabel>
             <Select
               value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
+              onChange={handleStatusChange}
               label="Status"
             >
               <MenuItem value="">All</MenuItem>
@@ -76,6 +79,7 @@ const TransferTable = ({ tokenId }) => {
             </Select>
           </FormControl>
         </div>
+
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
@@ -90,13 +94,13 @@ const TransferTable = ({ tokenId }) => {
             </TableHead>
             <TableBody>
               {filtered.map((tx, index) => (
-                <TableRow key={index}>
+                <TableRow key={tx.id || index}>
                   <TableCell>{tx.id}</TableCell>
                   <TableCell>{tx.price}</TableCell>
                   <TableCell>{shortenAddress(tx.seller)}</TableCell>
                   <TableCell>{shortenAddress(tx.buyer)}</TableCell>
                   <TableCell>{formatDate(tx.timestamp)}</TableCell>
-                  <TableCell>{tx.status ? "Success": "Failed"}</TableCell>
+                  <TableCell>{tx.status ? "Success" : "Failed"}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -106,6 +110,5 @@ const TransferTable = ({ tokenId }) => {
     </Card>
   );
 };
-
 
 export default TransferTable;

@@ -10,10 +10,11 @@ import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import CircularProgress from '@mui/material/CircularProgress';
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom";
 import { usePE } from '../hooks/usePE';
 import { uploadToIPFS } from '../api/storage';
 import { publicNewArtwork, parseUnits } from '../api/utils';
+
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
         padding: theme.spacing(2),
@@ -24,49 +25,55 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 const steps = ['Upload To IPFS', 'Minting'];
+
 export default function AutoProcess({ open, setOpen, data, file, price, unit }) {
-    const { contract, pinata } = usePE()
-    const navigate = useNavigate()
+    const { contract, pinata } = usePE();
+    const navigate = useNavigate();
     const [activeStep, setActiveStep] = React.useState(0);
 
     const handleClickOpen = () => {
-        console.log(data) 
-        console.log(file)
-        console.log(price)
-        console.log(unit) 
+        console.log(data, file, price, unit);
         setOpen(true);
     };
 
     const handleNext = () => {
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        setActiveStep((prev) => prev + 1);
     };
 
+    // Memoize upload function
+    const upload = React.useCallback(async () => {
+        try {
+            const url = `${import.meta.env.VITE_SERVER_URL}/presigned-url`;
+            const metadata = await uploadToIPFS(pinata, url, file, data);
+            handleNext();
 
+            const weiAmount = parseUnits(unit, price);
+            await publicNewArtwork(contract, weiAmount, metadata, data.name);
+            handleNext();
+
+            navigate("/");
+        } catch (error) {
+            alert(error.message);
+        }
+    }, [pinata, file, data, unit, price, contract, navigate]);
+
+    // Upload effect only when open
     React.useEffect(() => {
         if (open) {
-            const upload = async () => {
-                try {
-                    const url = `${import.meta.env.VITE_SERVER_URL}/presigned-url`
-                    const metadata = await uploadToIPFS(pinata, url, file, data)
-                    handleNext();
-
-
-                    let weiAmount = parseUnits(unit, price);
-                    await publicNewArtwork(contract, weiAmount, metadata, data.name) 
-                    handleNext();
-
-                    navigate("/")
-                } catch (error) {
-                    alert(error.message)
-                }
-            };
-
             upload();
         }
-    }, [open]);
+    }, [open, upload]);
+
+    // Memoize step elements
+    const stepElements = React.useMemo(() =>
+        steps.map((label) => (
+            <Step key={label}>
+                <StepLabel>{label}</StepLabel>
+            </Step>
+        )), []);
 
     return (
-        <React.Fragment>
+        <>
             <Button variant="outlined" onClick={handleClickOpen}>
                 Create
             </Button>
@@ -80,29 +87,23 @@ export default function AutoProcess({ open, setOpen, data, file, price, unit }) 
                 <DialogContent dividers>
                     <Box sx={{ width: '100%' }}>
                         <Stepper activeStep={activeStep}>
-                            {steps.map((label, index) => {
-                                return (
-                                    <Step key={label}>
-                                        <StepLabel>{label}</StepLabel>
-                                    </Step>
-                                );
-                            })}
+                            {stepElements}
                         </Stepper>
                         {activeStep === steps.length ? (
-                            <React.Fragment>
-                                <Typography sx={{ mt: 2, mb: 1 }}>
-                                    All steps completed - you&apos;re finished
-                                </Typography>
-                            </React.Fragment>
+                            <Typography sx={{ mt: 2, mb: 1 }}>
+                                All steps completed - you're finished
+                            </Typography>
                         ) : (
-                            <React.Fragment>
-                                <Typography sx={{ mt: 2, mb: 1 }}>Step {activeStep + 1}</Typography>
+                            <>
+                                <Typography sx={{ mt: 2, mb: 1 }}>
+                                    Step {activeStep + 1}
+                                </Typography>
                                 <CircularProgress />
-                            </React.Fragment>
+                            </>
                         )}
                     </Box>
                 </DialogContent>
             </BootstrapDialog>
-        </React.Fragment>
+        </>
     );
 }
