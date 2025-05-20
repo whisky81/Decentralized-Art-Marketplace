@@ -1,10 +1,16 @@
 const MAX_SIZE = 20 * 1024 * 1024; // 20 MB
 
-const getPresignedUrl = (url) => {
+const getPresignedUrl = (url, message, signature, nonce) => {
   return new Promise(async (resolve, reject) => {
     try {
       console.log(url);
-      const response = await fetch(url);
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message, signature, nonce })
+      });
       if (!response.ok) {
         throw new Error("Faild");
       }
@@ -49,7 +55,7 @@ export const getMetadata = (pinata, cid) => {
   });
 };
 
-export const uploadToIPFS = (pinata, url, file, data) => {
+export const uploadToIPFS = (pinata, url, file, data, message, signature, nonce) => {
   return new Promise(async (resolve, reject) => {
     try {
       if (!file || file.size > MAX_SIZE) {
@@ -64,7 +70,7 @@ export const uploadToIPFS = (pinata, url, file, data) => {
         throw new Error("Metadata must include a 'name' property.");
       }
 
-      let presignedUrl = await getPresignedUrl(url);
+      let presignedUrl = await getPresignedUrl(url, message, signature, nonce);
 
       console.log("---Presigned Url---");
       console.log(presignedUrl);
@@ -88,7 +94,7 @@ export const uploadToIPFS = (pinata, url, file, data) => {
         type: "application/json",
       });
 
-      presignedUrl = await getPresignedUrl(url);
+      presignedUrl = await getPresignedUrl(url, message, signature, nonce);
       const uploadMetadata = await pinata.upload.public
         .file(metadataFile)
         .url(presignedUrl);

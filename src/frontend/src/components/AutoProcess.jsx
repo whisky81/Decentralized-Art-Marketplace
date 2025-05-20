@@ -13,7 +13,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { useNavigate } from "react-router-dom";
 import { usePE } from '../hooks/usePE';
 import { uploadToIPFS } from '../api/storage';
-import { publicNewArtwork, parseUnits } from '../api/utils';
+import { publicNewArtwork, parseUnits, signInWithEthereum } from '../api/utils';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
@@ -24,10 +24,10 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     },
 }));
 
-const steps = ['Upload To IPFS', 'Minting'];
+const steps = ['Sign In With Ethereum', 'Upload To IPFS', 'Minting'];
 
 export default function AutoProcess({ open, setOpen, data, file, price, unit }) {
-    const { contract, pinata } = usePE();
+    const { contract, pinata, signer, account } = usePE();
     const navigate = useNavigate();
     const [activeStep, setActiveStep] = React.useState(0);
 
@@ -40,11 +40,16 @@ export default function AutoProcess({ open, setOpen, data, file, price, unit }) 
         setActiveStep((prev) => prev + 1);
     };
 
+    
+
     // Memoize upload function
     const upload = React.useCallback(async () => {
         try {
+            const { message, signature, nonce } = await signInWithEthereum(signer, account, import.meta.env.VITE_SERVER_URL, window.location) 
+            handleNext()
+
             const url = `${import.meta.env.VITE_SERVER_URL}/presigned-url`;
-            const metadata = await uploadToIPFS(pinata, url, file, data);
+            const metadata = await uploadToIPFS(pinata, url, file, data, message, signature, nonce);
             handleNext();
 
             const weiAmount = parseUnits(unit, price);
@@ -53,6 +58,8 @@ export default function AutoProcess({ open, setOpen, data, file, price, unit }) 
 
             navigate("/");
         } catch (error) {
+            console.log("FROM AUTO PROCESS")
+            console.error(error)
             alert(error.message);
         }
     }, [pinata, file, data, unit, price, contract, navigate]);

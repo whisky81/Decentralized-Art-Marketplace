@@ -1,5 +1,36 @@
 import { ethers } from "ethers";
 import Whisky from "@abis/Whisky.sol/Whisky.json";
+import { SiweMessage } from "siwe"
+
+export function signInWithEthereum(signer, account, url, location) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const scheme = location.protocol.slice(0, -1);
+      const domain = location.host;
+      const origin = location.origin;
+      let res = await fetch(`${url}/nonce`);
+      const nonce = await res.text()
+      let message = new SiweMessage({
+        scheme,
+        domain,
+        address: account,
+        statement: "verity your account to start mint nft",
+        uri: origin,
+        version: "1",
+        chainId: "1",
+        nonce,
+      });
+      message = message.prepareMessage();
+
+      const signature = await signer.signMessage(message);
+      console.log(signature);
+
+      resolve({ message, signature, nonce }) 
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
 
 export function getEthersProvider() {
   return new Promise((resolve, reject) => {
@@ -32,41 +63,18 @@ export function getEthersProvider() {
             reject(new Error("User denied account access."));
           }
         } else {
-          // No injected provider found, fall back to a local development node
-          console.log(
-            "No injected Ethereum provider found, falling back to local node (http://127.0.0.1:9545)."
+          throw new Error(
+            "No injected provider found. Please install the MetaMask extension."
           );
-          // Create a JsonRpcProvider connected to the local node
-          // Make sure you have a local node running (e.g., Ganache, Hardhat Network)
-          const provider = new ethers.JsonRpcProvider("http://127.0.0.1:9545");
-
-          // Verify connection (optional, but good practice)
-          try {
-            await provider.getBlockNumber(); // Simple check to see if connection is working
-            console.log("Connected to local node.");
-            resolve(provider); // Resolve the promise with the local provider
-          } catch (localNodeError) {
-            console.error(
-              "Could not connect to local node at http://127.0.0.1:9545.",
-              localNodeError
-            );
-            reject(
-              new Error(
-                "Failed to connect to local node. Please ensure it's running."
-              )
-            );
-          }
         }
       } catch (error) {
         // Catch any unexpected errors during provider setup
         console.error("Error initializing ethers provider:", error);
-        reject(new Error(error?.reason || "Transaction Failed"));
+        reject(
+          new Error(error?.reason || error?.message || "Transaction Failed")
+        );
       }
-    }); // End of window.addEventListener
-
-    // Optional: Add a timeout or handle cases where the 'load' event doesn't fire
-    // or window.ethereum never becomes available.
-    // setTimeout(() => reject(new Error("Provider setup timed out")), 10000); // Example timeout
+    });
   });
 }
 
@@ -74,7 +82,7 @@ export function getContract(signer) {
   return new Promise(async (resolve, reject) => {
     try {
       // const contractAddress = "0xbC9735456053FA37Cc4d237EA5FEE03A2cDFc25c";
-      const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+      const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
       const contract = new ethers.Contract(contractAddress, Whisky.abi, signer);
       resolve(contract);
     } catch (error) {
@@ -132,7 +140,6 @@ function handleAssetTxn(proxyResult) {
     status: Number(proxyResult[5]) === 0,
   };
 }
-
 
 export function artGallery(contract) {
   return new Promise(async (resolve, reject) => {
@@ -197,9 +204,6 @@ export function shortenAddress(address) {
 
 export function changeOrResell(contract, tokenId, price) {
   return new Promise(async (resolve, reject) => {
-    // if (BigInt(price) <= 0n) {
-    //     reject(new Error("The Value must be greater than 0"));
-    //   }
     try {
       const tx = await contract.resellAsset(BigInt(tokenId), BigInt(price));
       const receipt = await tx.wait();
@@ -312,7 +316,7 @@ async function handleEvent(contract, tokenId, eventName) {
     if (events.length) {
       for (const event of events) {
         if (event.args[0].toString() === tokenId) {
-            switch (eventName) {
+          switch (eventName) {
             case "AssetCreated":
               res.push(handleAssetCreatedEvent(event.args));
               break;
@@ -322,7 +326,7 @@ async function handleEvent(contract, tokenId, eventName) {
             case "AssetResell":
               res.push(handleAssetResellEvent(event.args));
               break;
-            }
+          }
           break;
         }
       }
@@ -337,9 +341,11 @@ export function events(contract, tokenId) {
       const res = {
         AssetCreated: [],
         AssetSold: [],
-        AssetResell: []
+        AssetResell: [],
       };
-      res["AssetCreated"] = (await handleEvent(contract, tokenId, "AssetCreated"))[0];
+      res["AssetCreated"] = (
+        await handleEvent(contract, tokenId, "AssetCreated")
+      )[0];
       res["AssetSold"] = await handleEvent(contract, tokenId, "AssetSold");
       res["AssetResell"] = await handleEvent(contract, tokenId, "AssetResell");
       resolve(res);
