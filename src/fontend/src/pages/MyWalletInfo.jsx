@@ -42,7 +42,8 @@ export default function MyWalletInfo() {
 
                 });
             } catch (error) {
-                alert(error.message);
+                // alert(error.message);
+                console.error(error)
 
             }
         }

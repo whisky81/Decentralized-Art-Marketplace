@@ -75,7 +75,7 @@ function CardDetail() {
                 setArt(res);
             } catch (error) {
                 console.error(error);
-                alert(error.message);
+                // alert(error.message);
             }
         }
 

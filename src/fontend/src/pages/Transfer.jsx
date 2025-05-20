@@ -30,7 +30,8 @@ function Transfer() {
                 setMetadata(await getMetadata(pinata, res.metadataURI)) 
                 setArt(res);
             } catch (error) {
-                alert(error.message);
+                // alert(error.message);
+                console.error(error) 
             }
         }
 

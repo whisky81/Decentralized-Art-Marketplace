@@ -65,7 +65,7 @@ contract Whisky is ERC721 {
     uint256 private _nextTokenId; // Start from 0
     mapping(uint256 => Asset) private _assets; // tokenId => Asset
     // Tracks the number of assets that are in `AssetStatus.Available` status
-    uint256 private _availableAssetCount;
+    uint256 private _availableAssetCount = 0;
     mapping(uint256 => AssetTxn[]) private _assetTxns;
 
     constructor() ERC721("Whisky", "WHSKY") {}
@@ -255,8 +255,9 @@ contract Whisky is ERC721 {
         uint256 index = 0;
         for (uint256 i = 0; i < _nextTokenId; i++) {
             if (_assets[i].status == AssetStatus.Available) {
+                if (index >= _availableAssetCount) break;
                 Asset memory asset = _assets[i];
-                availableAsset[i] = ReturnedAsset({
+                availableAsset[index] = ReturnedAsset({
                     tokenId: asset.tokenId,
                     owner: _requireOwner(asset.tokenId),
                     name: asset.name,

@@ -18,7 +18,8 @@ export default function MyCard({ art }) {
             try {
                 setMetadata(await getMetadata(pinata, art.metadataURI))
             } catch (error) {
-                alert(error.message);
+                // alert(error.message);
+                console.error(error)
             }
         }
         fetchData();

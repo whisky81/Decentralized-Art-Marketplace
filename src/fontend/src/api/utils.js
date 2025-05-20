@@ -73,7 +73,7 @@ export function getEthersProvider() {
 export function getContract(signer) {
   return new Promise(async (resolve, reject) => {
     try {
-      const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+      const contractAddress = "0xbC9735456053FA37Cc4d237EA5FEE03A2cDFc25c";
       const contract = new ethers.Contract(contractAddress, Whisky.abi, signer);
       resolve(contract);
     } catch (error) {

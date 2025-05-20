@@ -19,7 +19,8 @@ export default function ArtGallery() {
                 setArts(tmp);
                 setFilteredArts(tmp);
             } catch (error) {
-                alert(error.message);
+                // alert(error.message);
+                console.error(error) 
             }
         }
         fetchData();

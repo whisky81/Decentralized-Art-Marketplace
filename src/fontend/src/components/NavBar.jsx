@@ -16,7 +16,8 @@ export default function Navbar() {
                     symbol: await contract.symbol()
                 });
             } catch (error) {
-                alert(error.message);
+                // alert(error.message);
+                console.error(error)
             }
         }
 

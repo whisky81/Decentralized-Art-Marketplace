@@ -1,6 +1,5 @@
 import NavBar from './components/NavBar';
 import Loading from './components/Loading';
-import PublicArt from './pages/PublicArt';
 import ArtGallery from './pages/ArtGallery';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import CardDetail from './components/CardDetail';

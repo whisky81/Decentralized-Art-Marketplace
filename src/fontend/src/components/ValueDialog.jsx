@@ -26,7 +26,8 @@ function ValueDialog({ open, setOpen, tokenId, p, msg }) {
 
             navigate("/");
         } catch (error) {
-            alert(error.message);
+            // alert(error.message);
+            console.error(error)
         }
     }
 
