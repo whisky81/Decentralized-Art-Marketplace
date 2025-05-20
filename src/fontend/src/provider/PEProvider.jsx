@@ -34,6 +34,9 @@ export const PEProvider = ({ children }) => {
             const innerAccount = await innerSigner.getAddress()
             const innerContract = await getContract(innerSigner)  
 
+            console.log("CURRENT ACCOUNT")
+            console.log(innerAccount)
+
             setPinata(innerPinata);
             setStarting(false);
             setProvider(innerProvider)

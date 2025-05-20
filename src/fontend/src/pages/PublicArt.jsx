@@ -22,7 +22,6 @@ export default function PublicArt() {
         try {
             let weiAmount = parseUnits(unit, price); 
             const receipt = await publicNewArtwork(contract, weiAmount, metadataURI, name);
-            console.log(receipt);
             navigate("/"); 
         } catch (error) {
             alert(error.message); 

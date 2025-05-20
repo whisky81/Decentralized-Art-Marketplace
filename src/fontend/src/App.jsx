@@ -6,8 +6,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import CardDetail from './components/CardDetail';
 import MyWalletInfo from './pages/MyWalletInfo';
 import Transfer from './pages/Transfer';
-import Guide from './pages/Guide';
 import { usePE } from './hooks/usePE';
+import CreateNftForm from './pages/PublicArtV2';
+import NotFound from './pages/NotFound';
 
 
 function App() {
@@ -21,14 +22,14 @@ function App() {
       <BrowserRouter>
         <NavBar/>
         <Routes>
-          <Route path="/create" element={<PublicArt/>} />
           <Route path="/">
             <Route index element={<ArtGallery/>} />
             <Route path="/nft/:tokenId" element={<CardDetail/>} />
           </Route>
           <Route path="/:account" element={<MyWalletInfo/>}/>
           <Route path="/transfer/:tokenId" element={<Transfer/>} />
-          <Route path="/guide" element={<Guide/>} />
+          <Route path="/create" element={<CreateNftForm />} />
+          <Route path="*" element={<NotFound />}/>
         </Routes>
       </BrowserRouter>
     </>

@@ -14,9 +14,10 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'; // Trash icon
 import Loading from '../components/Loading';
 import { getArtworkByTokenId, transfer } from '../api/utils';
 import { usePE } from '../hooks/usePE';
+import { getMetadata } from '../api/storage';
 
 function Transfer() {
-    const { contract, account } = usePE();
+    const { contract, account, pinata } = usePE();
     const navigate = useNavigate();
     const { tokenId } = useParams();
     const [art, setArt] = useState();
@@ -26,12 +27,8 @@ function Transfer() {
         const fetchData = async () => {
             try {
                 const res = await getArtworkByTokenId(contract, tokenId);
-                const response = await fetch(res.metadataURI);
-                const data = await response.json();
-                setMetadata(data);
+                setMetadata(await getMetadata(pinata, res.metadataURI)) 
                 setArt(res);
-
-                console.log(data);
             } catch (error) {
                 alert(error.message);
             }

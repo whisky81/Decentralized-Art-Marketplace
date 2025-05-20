@@ -13,7 +13,7 @@ const unitOptions = ["wei", "gwei", "finney", "ether"];
 
 export default function Value({ price, setUnit, setPrice, unit }) {
     return (<div><Typography variant="subtitle2" sx={{ fontWeight: "bold", color: "#003300" }}>
-        VALUE
+        PRICE
     </Typography>
         <FormControl fullWidth>
             <OutlinedInput

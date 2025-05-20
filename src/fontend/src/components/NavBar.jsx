@@ -36,7 +36,6 @@ export default function Navbar() {
           <Link to="/"><Button variant="outlined" sx={{ mx: 1 }}>ART GALLERY</Button></Link>
           <Link to="/create"><Button variant="outlined" sx={{ mx: 1 }}>PUBLISH YOUR ART</Button></Link>
           <Link to={`/${account}`}><Button variant="outlined" sx={{ mx: 1 }}>MY WALLET INFO</Button></Link>
-          <Link to="/guide"><Button variant="outlined" sx={{ mx: 1 }}>Guide</Button></Link>
         </Box>
       </Toolbar>
     </AppBar>

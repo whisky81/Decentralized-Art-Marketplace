@@ -85,7 +85,6 @@ export function getContract(signer) {
 export function publicNewArtwork(contract, price, metadataURI, name) {
   return new Promise(async (resolve, reject) => {
     try {
-      await checkMetadata(metadataURI);
       const tx = await contract.createAndSellAsset(price, metadataURI, name);
       const receipt = await tx.wait();
       if (receipt.status === 1) {
@@ -133,26 +132,6 @@ function handleAssetTxn(proxyResult) {
   };
 }
 
-function checkMetadata(metadataURI) {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const response = await fetch(metadataURI);
-      const data = await response.json();
-      if (
-        !data.hasOwnProperty("name") ||
-        !data.hasOwnProperty("description") ||
-        !data.hasOwnProperty("image")
-      ) {
-        reject(
-          new Error("Metadata must be have name, description, image fields")
-        );
-      }
-      resolve();
-    } catch (error) {
-      reject(new Error(error?.reason || "Transaction Failed"));
-    }
-  });
-}
 
 export function artGallery(contract) {
   return new Promise(async (resolve, reject) => {

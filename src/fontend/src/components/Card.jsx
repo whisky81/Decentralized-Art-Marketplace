@@ -4,7 +4,11 @@ import { useState, useEffect } from 'react';
 import Loading from './Loading';
 import ForSale from './ForSale';
 import NotForSale from './NotForSale';
+import { getMetadata } from '../api/storage';  
+import { usePE } from '../hooks/usePE'; 
+
 export default function MyCard({ art }) {
+    const { pinata } = usePE() 
     const [metadata, setMetadata] = useState();
     const getDate = (timestamp) => {
         return (new Date(timestamp)).toDateString(); 
@@ -12,9 +16,7 @@ export default function MyCard({ art }) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(art.metadataURI);
-                const data = await response.json();
-                setMetadata(data);
+                setMetadata(await getMetadata(pinata, art.metadataURI))
             } catch (error) {
                 alert(error.message);
             }

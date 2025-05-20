@@ -44,9 +44,11 @@ import PriceChart from './PriceChart';
 import TransferHistory from './TransferHistory';
 import EventStats from './EventStats';
 import { usePE } from '../hooks/usePE';
+import { getMetadata } from '../api/storage';
+import { isAddress } from 'ethers';
 
 function CardDetail() {
-    const { contract, account } = usePE();
+    const { contract, account, pinata } = usePE();
     const { tokenId } = useParams();
     const [art, setArt] = useState();
     const [metadata, setMetadata] = useState();
@@ -69,14 +71,8 @@ function CardDetail() {
                 const evts = await events(contract, tokenId);
                 setEvent(evts);
                 const res = await getArtworkByTokenId(contract, tokenId);
-                const response = await fetch(res.metadataURI);
-                const data = await response.json();
-                setMetadata(data);
+                setMetadata(await getMetadata(pinata, res.metadataURI));
                 setArt(res);
-
-                console.log("EVENTS", evts);
-                console.log("ART", res);
-                console.log("METADATA", data);
             } catch (error) {
                 console.error(error);
                 alert(error.message);
@@ -138,7 +134,7 @@ function CardDetail() {
 
     const handleTrait = (trait_type, value) => {
         const type = trait_type.toLowerCase();
-        if (type === "author") {
+        if (type === "author" && isAddress(value)) {
             return <Link to={`/${value}`}>{value.toString() === account ? "You" : shortenAddress(value)}</Link>;
         } else if (type === "date") {
             return (new Date(value)).toString();
@@ -192,7 +188,7 @@ function CardDetail() {
                                 }}
                             >
                                 <div style={{ width: '100%', height: '100%', position: 'relative' }}>
-                                    <a href={metadata.image}>
+                                    <a href={metadata.image} target="_blank" rel="noopener noreferrer">
                                         <img
                                             src={metadata.image}
                                             alt={metadata.name}
