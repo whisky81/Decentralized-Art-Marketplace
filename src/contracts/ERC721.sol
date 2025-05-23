@@ -298,20 +298,4 @@ abstract contract ERC721 is IERC721, IERC165 {
         _safeMint(_to, _tokenId, "");
     }
 
-    /**
-     * @dev Burns `_tokenId`.
-     * Clears approvals and emits a {Transfer} event to the zero address.
-     * Requires the caller of the public burn function to be authorized.
-     */
-    function _burn(uint256 _tokenId) internal virtual {
-        address owner = _requireOwner(_tokenId); // Checks existence and gets owner
-
-        // Authorization to clear approval: owner is implicitly authorized.
-        _approve(address(0), _tokenId, owner); // Clear existing approval
-
-        _balances[owner] -= 1;
-        delete _owners[_tokenId]; // Equivalent to _owners[_tokenId] = address(0)
-
-        emit Transfer(owner, address(0), _tokenId);
-    }
 }
