@@ -16,7 +16,7 @@ export const PEContext = createContext({
 export const PEProvider = ({ children }) => {
     const [pinata, setPinata] = useState(null)
     const [starting, setStarting] = useState(true)
-    const [error, setError] = useState(false);
+    const [error, setError] = useState("");
     const [provider, setProvider] = useState(null)
     const [signer, setSigner] = useState(null)
     const [account, setAccount] = useState(null)
@@ -43,16 +43,23 @@ export const PEProvider = ({ children }) => {
             setSigner(innerSigner)
             setAccount(innerAccount)
             setContract(innerContract)
+            setError('');
         } catch (error) {
             console.error(error)
-            setError(true)
+            setError(error?.message || "Failed To Set Up")
         }
     }, []);
 
 
     useEffect(() => {
         init();
-    }, [])
+    }, [window.ethereum]) 
+
+    if (error) {
+        return (<div>
+            ERROR: {error}
+        </div>);
+    }
 
     return (<PEContext.Provider
         value={{

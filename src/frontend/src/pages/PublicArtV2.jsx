@@ -31,8 +31,8 @@ const CreateNftFormV2 = () => {
     const [newTraitType, setNewTraitType] = useState('');
     const [newTraitName, setNewTraitName] = useState('');
     const [open, setOpen] = useState(false) 
-    const [price, setPrice] = useState("0");
-    const [unit, setUnit] = useState("wei");
+    const [price, setPrice] = useState("0.005");
+    const [unit, setUnit] = useState("ether");
 
     const [data, setData] = useState({
             name: "",

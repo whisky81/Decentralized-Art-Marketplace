@@ -71,6 +71,7 @@ export const uploadToIPFS = (pinata, url, file, data, message, signature, nonce)
       }
 
       let presignedUrl = await getPresignedUrl(url, message, signature, nonce);
+      // let presignedUrl = await testGetPresignedUrl();
 
       console.log("---Presigned Url---");
       console.log(presignedUrl);
@@ -95,6 +96,7 @@ export const uploadToIPFS = (pinata, url, file, data, message, signature, nonce)
       });
 
       presignedUrl = await getPresignedUrl(url, message, signature, nonce);
+      // presignedUrl = await testGetPresignedUrl();
       const uploadMetadata = await pinata.upload.public
         .file(metadataFile)
         .url(presignedUrl);
@@ -106,9 +108,34 @@ export const uploadToIPFS = (pinata, url, file, data, message, signature, nonce)
       console.log("---upload Metadata Cid---");
       console.log(uploadMetadata.cid);
 
-      resolve(uploadMetadata.cid);
+      resolve({
+        metadata: uploadMetadata.cid,
+        image: uploadImage.cid
+      });
     } catch (error) {
       reject(error);
     }
   });
 };
+
+export const unpin = (message, signature, nonce, cids) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const response = await fetch('http://localhost:8787/unpin', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message, signature, nonce, cids }) 
+      });
+
+      if (!response.ok) {
+        throw new Error(response.statusText);
+      }
+
+      resolve();
+    } catch(error) {
+      reject(error);
+    }
+  })
+}

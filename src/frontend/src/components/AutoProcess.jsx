@@ -12,7 +12,7 @@ import StepLabel from '@mui/material/StepLabel';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useNavigate } from "react-router-dom";
 import { usePE } from '../hooks/usePE';
-import { uploadToIPFS } from '../api/storage';
+import { uploadToIPFS, unpin } from '../api/storage';
 import { publicNewArtwork, parseUnits, signInWithEthereum } from '../api/utils';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -30,6 +30,14 @@ export default function AutoProcess({ open, setOpen, data, file, price, unit }) 
     const { contract, pinata, signer, account } = usePE();
     const navigate = useNavigate();
     const [activeStep, setActiveStep] = React.useState(0);
+    const [error, setError] = React.useState('');
+    const [cids, setCids] = React.useState({
+        metadata: '',
+        image: '',
+        message: '',
+        signature: '', 
+        nonce: '' 
+    });
 
     const handleClickOpen = () => {
         console.log(data, file, price, unit);
@@ -49,18 +57,18 @@ export default function AutoProcess({ open, setOpen, data, file, price, unit }) 
             handleNext()
 
             const url = `${import.meta.env.VITE_SERVER_URL}/presigned-url`;
-            const metadata = await uploadToIPFS(pinata, url, file, data, message, signature, nonce);
+            const { metadata, image } = await uploadToIPFS(pinata, url, file, data, message, signature, nonce);
             handleNext();
 
             const weiAmount = parseUnits(unit, price);
             await publicNewArtwork(contract, weiAmount, metadata, data.name);
             handleNext();
 
+            setError('');
+            setCids({ metadata, image, message, signature, nonce }); 
             navigate("/");
         } catch (error) {
-            console.log("FROM AUTO PROCESS")
-            console.error(error)
-            alert(error.message);
+            setError(`Error: ${error?.message}\nFailed in step ${steps[activeStep]}`);
         }
     }, [pinata, file, data, unit, price, contract, navigate]);
 
@@ -78,6 +86,18 @@ export default function AutoProcess({ open, setOpen, data, file, price, unit }) 
                 <StepLabel>{label}</StepLabel>
             </Step>
         )), []);
+    
+    if (error) {
+        alert(error);
+        setError(''); 
+        setOpen(false);
+        if (activeStep === 2) {
+            unpin(cids.message, cids.signature, cids.nonce, [cids.metadata, cids.image])
+                .then(data => {})
+                .catch(err => alert(err?.message)); 
+        }
+        setActiveStep(0);
+    }
 
     return (
         <>

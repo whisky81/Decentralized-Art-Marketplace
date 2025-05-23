@@ -3,7 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { PinataSDK } from "pinata";
 import { generateNonce, SiweMessage, SiweErrorType } from "siwe";
-
+import * as isIpfs from 'is-ipfs';
 dotenv.config();
 const app = express();
 
@@ -59,6 +59,7 @@ const verify = async (req, res, next) => {
 }
 
 app.post("/presigned-url", verify, async (req, res) => {
+  console.log("SIGNED SUCCESS");
   try {
     const pinata = new PinataSDK({
       pinataJwt: process.env.PINATA_JWT,
@@ -66,7 +67,7 @@ app.post("/presigned-url", verify, async (req, res) => {
     });
 
     const url = await pinata.upload.public.createSignedURL({
-      expires: 60,
+      expires: 2 * 60,
     });
     res.setHeader("Content-Type", "application/json");
     return res.status(200).json({ url });
@@ -75,6 +76,34 @@ app.post("/presigned-url", verify, async (req, res) => {
     return res.status(500).json({
       message: error.message,
     });
+  }
+});
+
+app.delete("/unpin", verify, async (req, res) => {
+  try {
+    const pinata = new PinataSDK({
+      pinataJwt: process.env.PINATA_JWT,
+      pinataGateway: process.env.GATEWAY_URL,
+    });
+
+    const cids = req.body.cids; 
+    for (const cid of cids) {
+      if (!isIpfs.cid(cid)) {
+        return res.status(400).json({
+          message: `Invalid CID: ${cid}`
+        });
+      }
+    }
+
+    const unpin = await pinata.files.public.delete(cids);
+
+    return res.json({
+      unpin
+    })
+  } catch(error) {
+    return res.status(500).json({
+      message: error?.message || "Failed to unpin files"
+    })
   }
 });
 
