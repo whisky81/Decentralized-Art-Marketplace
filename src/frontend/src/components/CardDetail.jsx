@@ -125,11 +125,43 @@ function CardDetail() {
                 <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} gap={3}>
                     <Box sx={{ width: { xs: '100%', md: '40%' }, display: 'flex', flexDirection: 'column' }}>
                         <Paper elevation={0} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 2, overflow: 'hidden' }}>
-                            <Box sx={{ height: 400, backgroundColor: 'grey.100', display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid', borderColor: 'divider' }}>
-                                <a href={metadata.image} target="_blank" rel="noopener noreferrer">
-                                    <img src={metadata.image} alt={metadata.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                </a>
+                            <Box sx={{
+                                height: 400,
+                                backgroundColor: 'grey.100',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                borderBottom: '1px solid',
+                                borderColor: 'divider',
+                            }}>
+                                {metadata.video ? (
+                                    <video
+                                        controls
+                                        style={{
+                                            width: '100%',
+                                            height: '100%',
+                                            objectFit: 'contain'
+                                        }}
+                                        poster={undefined}
+                                    >
+                                        <source src={metadata.image} />
+                                        Video Not Supported
+                                    </video>
+                                ) : (
+                                    <a href={metadata.image} target="_blank" rel="noopener noreferrer">
+                                        <img
+                                            src={metadata.image}
+                                            alt={metadata.name}
+                                            style={{
+                                                width: '100%',
+                                                height: '100%',
+                                                objectFit: 'cover'
+                                            }}
+                                        />
+                                    </a>
+                                )}
                             </Box>
+
                             <Box>
                                 <AccordionSection id="description" title="Description" icon={<DescriptionIcon fontSize="small" color="action" />}>
                                     <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.875rem' }}>

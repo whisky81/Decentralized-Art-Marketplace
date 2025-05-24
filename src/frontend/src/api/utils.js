@@ -64,7 +64,7 @@ export function getEthersProvider() {
           }
         } else {
           throw new Error(
-            "No injected provider found. Please install the MetaMask extension."
+            "Please install the MetaMask extension in your browser.\nIf it’s already installed, make sure you're signed in."
           );
         }
       } catch (error) {

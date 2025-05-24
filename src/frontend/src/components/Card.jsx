@@ -33,12 +33,26 @@ function MyCard({ art }) {
 
     return (
         <Card sx={{ maxWidth: 345 }}>
-            <CardMedia
-                component="img"
-                height="194"
-                image={metadata.image}
-                alt={metadata.name}
-            />
+            {
+  metadata.video ? ( 
+    <CardMedia
+      component="video"
+      height="194"
+      src={metadata.image} 
+      alt={metadata.name}
+      controls
+      poster={undefined} 
+    />
+  ) : (
+    <CardMedia
+      component="img"
+      height="194"
+      image={metadata.image} 
+      alt={metadata.name}
+    />
+  )
+}
+
             <CardContent>
                 <h3>{metadata.name}</h3>
                 <Typography variant="body2" sx={{ color: 'text.secondary' }}>

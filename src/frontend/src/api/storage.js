@@ -87,7 +87,7 @@ export const uploadToIPFS = (pinata, url, file, data, message, signature, nonce)
       console.log(uploadImage.cid);
 
       data.image = uploadImage.cid;
-
+      data.video = file.type.includes("video/");
       const jsonBlob = new Blob([JSON.stringify(data)], {
         type: "application/json",
       });

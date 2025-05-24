@@ -13,7 +13,7 @@ import {
     DialogActions,
     Stack,
     Chip,
-    Link as MuiLink,
+    // Link as MuiLink, // MuiLink is not used, can be removed if not planned for future use
 } from '@mui/material';
 import {
     CloudUpload,
@@ -30,22 +30,23 @@ const CreateNftFormV2 = () => {
     const [isTraitModalOpen, setTraitModalOpen] = useState(false);
     const [newTraitType, setNewTraitType] = useState('');
     const [newTraitName, setNewTraitName] = useState('');
-    const [open, setOpen] = useState(false) 
+    const [open, setOpen] = useState(false)
     const [price, setPrice] = useState("0.005");
     const [unit, setUnit] = useState("ether");
 
     const [data, setData] = useState({
-            name: "",
-            description: "",
-            external_url: "",
-            attributes: []
-        })
+        name: "",
+        description: "",
+        external_url: "",
+        attributes: []
+    })
 
     const fileInputRef = useRef();
 
     const handleFileChange = (e) => {
         const f = e.target.files[0];
-        if (f && f.type.includes("image/")) {
+        if (f) {
+            console.log(f.type);
             setFile(f);
             setPreview(URL.createObjectURL(f));
         }
@@ -82,7 +83,7 @@ const CreateNftFormV2 = () => {
                         sx={{
                             border: '2px dashed grey',
                             borderRadius: 2,
-                            height: 300,
+                            height: 345, // MODIFIED: Increased height for the dropzone (was 300)
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -96,33 +97,42 @@ const CreateNftFormV2 = () => {
                             hidden
                             ref={fileInputRef}
                             onChange={handleFileChange}
-                            accept="image/*"
+                            accept="image/*,video/*"
                         />
                         {preview ? (
-                            <Box
-                                component="img"
-                                src={preview}
-                                alt="Preview"
-                                sx={{ maxHeight: '100%', maxWidth: '100%' }}
-                            />
-                        ) : (
-                            <Stack alignItems="center">
-                                <CloudUpload sx={{ fontSize: 50, mb: 1 }} />
-                                <Typography>Click or drag media to upload (MAX SIZE 20 MB)</Typography>
-                            </Stack>
-                        )}
+  file.type.includes("video/") ? (
+    <Box mt={3} sx={{ width: 460, maxHeight: 460 }}> 
+        src={preview}
+        controls
+        style={{ width: '100%', height: 'auto', maxHeight: '100%', display: 'block' }}
+    </Box>
+  ) : (
+    <Box
+      component="img"
+      src={preview}
+      alt="Preview"
+      sx={{ maxHeight: 460, maxWidth: 460, width: 'auto', height: 'auto', display: 'block' }} 
+    />
+  )
+) : (
+  <Stack alignItems="center">
+    <CloudUpload sx={{ fontSize: 50, mb: 1 }} />
+    <Typography>Click or drag media to upload (MAX SIZE 20 MB)</Typography>
+  </Stack>
+)}
+
                     </Box>
                 </Grid>
                 <Grid>
-                    <Value price={price} setUnit={setUnit} setPrice={setPrice} unit={unit}/>
-                    <br/>
+                    <Value price={price} setUnit={setUnit} setPrice={setPrice} unit={unit} />
+                    <br />
                     <Stack spacing={3}>
                         <TextField
                             label="Name"
                             fullWidth
                             required
                             value={data.name}
-                            onChange={(e) => setData({ ...data, name: e.target.value })} 
+                            onChange={(e) => setData({ ...data, name: e.target.value })}
                         />
 
                         <TextField
@@ -162,7 +172,7 @@ const CreateNftFormV2 = () => {
             </Grid>
 
             <Box textAlign="right" mt={4}>
-                <AutoProcess open={open} setOpen={setOpen} data={data} file={file} price={price} unit={unit}/>
+                <AutoProcess open={open} setOpen={setOpen} data={data} file={file} price={price} unit={unit} />
             </Box>
 
             <Dialog open={isTraitModalOpen} onClose={() => setTraitModalOpen(false)}>
