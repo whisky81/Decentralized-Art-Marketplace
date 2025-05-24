@@ -1,92 +1,104 @@
 # Hướng dẫn Chạy Demo Dự án
 
+Hướng dẫn này giúp bạn chạy thử dự án demo một cách nhanh chóng.
+
 ## Yêu cầu Cài đặt
 
-1. **Node.js (phiên bản LTS mới nhất)**: Môi trường chạy JavaScript. Tải tại [nodejs.org](https://nodejs.org/).  
-   * Sau khi cài đặt, mở Terminal (hoặc Command Prompt/PowerShell) và kiểm tra:
-     ```bash
-     node -v
-     npm -v
-     ```
-2. **MetaMask Extension**: Ví điện tử để tương tác với DApp. Cài đặt cho trình duyệt tại [metamask.io](https://metamask.io/).
+Đảm bảo bạn đã cài đặt các phần mềm sau:
 
-## Chạy Demo
+1.  **Node.js (LTS mới nhất):** Môi trường chạy JavaScript. Tải tại [nodejs.org](https://nodejs.org/).
+    * Kiểm tra cài đặt bằng Terminal:
+        ```bash
+        node -v
+        npm -v
+        ```
+2.  **MetaMask Extension:** Ví điện tử cho trình duyệt để tương tác với DApp. Cài đặt tại [metamask.io](https://metamask.io/).
 
-### 1. Khởi chạy Local Node (Blockchain cục bộ)
+## Các Bước Chạy Demo
 
-1. **Cài đặt thư viện dự án:**  
-   * Mở Terminal, di chuyển đến thư mục gốc (src) của dự án.  
-   * Chạy lệnh:
-     ```bash
-     npm install
-     ```
-2. **Biên dịch smart contract:**
-   * Tại thư mục gốc của dự án src chạy:
-     ```bash
-     npx hardhat compile
-     ```
+Thực hiện theo các bước sau để chạy demo:
 
-2. **Khởi động Local Node:**  
-   * Tại thư mục gốc dự án, chạy:
-     ```bash
-     npx hardhat node
-     ```
-   * Lệnh này sẽ khởi chạy một mạng Ethereum giả lập. Bạn sẽ thấy danh sách các tài khoản thử nghiệm (Account #0, Account #1,...) và **Private Key** tương ứng của chúng.  
-   * **Quan trọng:** Giữ Terminal này mở trong suốt quá trình demo.
+### 1. Khởi chạy Blockchain Cục bộ (Local Node)
 
-3. **Kết nối MetaMask với Local Node và Import Tài khoản Thử Nghiệm:**  
-   * Mở MetaMask trên trình duyệt của bạn.  
-   * **Thêm mạng Hardhat Localhost (nếu chưa có):**  
-     - Nhấp vào danh sách mạng hiện tại (thường là "Ethereum Mainnet").  
-     - Chọn "Add network" (Thêm mạng).  
-     - Nếu có tùy chọn "Add a network manually" (Thêm mạng thủ công), hãy chọn nó.  
-     - Điền thông tin sau:  
-       - Network Name (Tên mạng): `Hardhat Localhost` (hoặc tên tùy ý)  
-       - New RPC URL (URL RPC mới): `http://127.0.0.1:8545`  
-       - Chain ID (ID chuỗi): `31337`  
-       - Currency Symbol (Ký hiệu tiền tệ - tùy chọn): `ETH`  
-     - Nhấp "Save" (Lưu). MetaMask sẽ tự động chuyển sang mạng này.  
-   * **Import tài khoản thử nghiệm vào MetaMask:**  
-     - Đảm bảo MetaMask đang ở mạng "Hardhat Localhost" vừa thêm.  
-     - Nhấp vào biểu tượng tài khoản (hình tròn) ở góc trên bên phải, chọn "Import account" (Nhập tài khoản).  
-     - Quay lại Terminal đang chạy `npx hardhat node`, **copy một trong các giá trị "PRIVATE KEY"** (ví dụ của Account #0).  
-     - Dán Private Key đã copy vào ô "Private Key" trong MetaMask và nhấp "Import".  
-     - Tài khoản này sẽ có sẵn ETH để thực hiện giao dịch trên mạng local.  
-     - **Lưu ý:** Tuyệt đối không sử dụng các private key này cho tài sản thật.
+1.  **Cài đặt thư viện dự án:**
+    * Mở Terminal, di chuyển đến thư mục gốc (`src`) của dự án.
+    * Chạy lệnh:
+        ```bash
+        npm install
+        ```
+2.  **Biên dịch Smart Contract:**
+    * Tại thư mục gốc (`src`), chạy:
+        ```bash
+        npx hardhat compile
+        ```
+3.  **Khởi động Local Node:**
+    * Tại thư mục gốc, chạy:
+        ```bash
+        npx hardhat node
+        ```
+    * Terminal này sẽ hiển thị các tài khoản thử nghiệm và khóa riêng tư (Private Key). **Giữ Terminal này luôn mở**.
+4.  **Kết nối MetaMask với Local Node:**
+    * Mở MetaMask.
+    * **Thêm mạng Hardhat Localhost:**
+        * Chọn "Add network".
+        * Chọn "Add a network manually" (nếu có).
+        * Nhập thông tin sau:
+            * **Network Name:** `Hardhat Localhost`
+            * **New RPC URL:** `http://127.0.0.1:8545`
+            * **Chain ID:** `31337`
+            * **Currency Symbol:** `ETH` (tùy chọn)
+        * Nhấn "Save".
+    * **Import tài khoản thử nghiệm:**
+        * Đảm bảo bạn đang ở mạng "Hardhat Localhost".
+        * Nhấp vào biểu tượng tài khoản, chọn "Import account".
+        * Copy một **Private Key** từ Terminal đang chạy `npx hardhat node` và dán vào MetaMask. Nhấn "Import".
+        * **Lưu ý:** Không dùng các khóa này cho tài sản thật.
+5.  **Triển khai Smart Contract:**
+    * Mở một **Terminal mới**.
+    * Di chuyển đến thư mục gốc (`src`).
+    * Chạy lệnh:
+        ```bash
+        npx hardhat ignition deploy ./ignition/modules/Whisky.js --network localhost
+        ```
 
-4. **Triển khai Smart Contract:**  
-   * Mở một **Terminal mới** (giữ nguyên Terminal đang chạy `npx hardhat node`).  
-   * Di chuyển đến thư mục gốc dự án src trong Terminal mới này.  
-   * Chạy lệnh:
-     ```bash
-     npx hardhat ignition deploy ./ignition/modules/Whisky.js --network localhost
-     ```
-### 2. Khởi chạy Express Pinata Server 
+### 2. Khởi chạy Express Pinata Server
+
+1.  **Cài đặt thư viện server:**
+    * Mở Terminal, di chuyển đến thư mục `src/express-pinata-server`.
+    * Chạy lệnh:
+        ```bash
+        npm install
+        ```
+2.  Đăng ký dịch vụ Pinata tại [Pinata](https://pinata.cloud/).
+3.  Tạo file `.env` trong thư mục `src/express-pinata-server` với nội dung:
+    ```
+    PINATA_JWT=YOUR_PINATA_JWT
+    GATEWAY_URL=YOUR_PINATA_GATEWAY_URL
+    ```
+    Thay `YOUR_PINATA_JWT` và `YOUR_PINATA_GATEWAY_URL` bằng API Key và Gateway URL từ Pinata.
+4.  **Chạy server:**
+    ```bash
+    npm run dev
+    ```
+
 ### 3. Khởi chạy Giao diện Người dùng (Frontend)
 
-1. **Cài đặt thư viện Frontend:**  
-   * Mở Terminal (có thể sử dụng lại Terminal thứ hai hoặc mở một Terminal mới).  
-   * Di chuyển vào thư mục `frontend` của dự án:
-     ```bash
-     cd frontend
-     ```
-   * Chạy lệnh:
-     ```bash
-     npm install
-     ```
-
-2. **Khởi chạy ứng dụng Frontend:**  
-   * Trong Terminal tại thư mục `frontend`, chạy:
-     ```bash
-     npm run dev
-     ```
-   * Mở trình duyệt web và truy cập địa chỉ URL hiển thị trong Terminal (thường là `http://localhost:xxxx`, ví dụ `http://localhost:3000` hoặc `http://localhost:5173`).  
-   * Khi được yêu cầu trên trang web, hãy kết nối MetaMask và chọn tài khoản bạn vừa import để tương tác với ứng dụng.
-
----
-
-**Lưu ý:**  
-* Cần giữ Terminal chạy `npx hardhat node` trong suốt quá trình demo để blockchain cục bộ hoạt động.  
-* Các private key từ `npx hardhat node` chỉ dành cho mục đích thử nghiệm trên mạng cục bộ, **không sử dụng cho tài sản thật**.
-
----
+1.  **Cài đặt thư viện Frontend:**
+    * Mở Terminal, di chuyển đến thư mục `frontend`.
+    * Chạy lệnh:
+        ```bash
+        npm install
+        ```
+2.  Tạo file `.env.local` trong thư mục `frontend` với nội dung:
+    ```
+    VITE_SERVER_URL=YOUR_EXPRESS_SERVER_URL
+    VITE_GATEWAY_URL=YOUR_PINATA_GATEWAY_URL
+    ```
+    Thay `YOUR_EXPRESS_SERVER_URL` bằng URL của server Express Pinata (ví dụ: `http://localhost:3001`) và `YOUR_PINATA_GATEWAY_URL` bằng Gateway URL của Pinata.
+3.  **Khởi chạy ứng dụng Frontend:**
+    * Trong Terminal tại thư mục `frontend`, chạy:
+        ```bash
+        npm run dev
+        ```
+    * Mở trình duyệt tại địa chỉ hiển thị trong Terminal (ví dụ: `http://localhost:3000` hoặc `http://localhost:5173`).
+    * Kết nối MetaMask và chọn tài khoản đã import để tương tác với ứng dụng.
