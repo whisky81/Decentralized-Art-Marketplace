@@ -15,10 +15,15 @@
 ### 1. Khởi chạy Local Node (Blockchain cục bộ)
 
 1. **Cài đặt thư viện dự án:**  
-   * Mở Terminal, di chuyển đến thư mục gốc của dự án.  
+   * Mở Terminal, di chuyển đến thư mục gốc (src) của dự án.  
    * Chạy lệnh:
      ```bash
      npm install
+     ```
+2. **Biên dịch smart contract:**
+   * Tại thư mục gốc của dự án src chạy:
+     ```bash
+     npx hardhat compile
      ```
 
 2. **Khởi động Local Node:**  
@@ -51,13 +56,13 @@
 
 4. **Triển khai Smart Contract:**  
    * Mở một **Terminal mới** (giữ nguyên Terminal đang chạy `npx hardhat node`).  
-   * Di chuyển đến thư mục gốc dự án trong Terminal mới này.  
+   * Di chuyển đến thư mục gốc dự án src trong Terminal mới này.  
    * Chạy lệnh:
      ```bash
      npx hardhat ignition deploy ./ignition/modules/Whisky.js --network localhost
      ```
-
-### 2. Khởi chạy Giao diện Người dùng (Frontend)
+### 2. Khởi chạy Express Pinata Server 
+### 3. Khởi chạy Giao diện Người dùng (Frontend)
 
 1. **Cài đặt thư viện Frontend:**  
    * Mở Terminal (có thể sử dụng lại Terminal thứ hai hoặc mở một Terminal mới).  
