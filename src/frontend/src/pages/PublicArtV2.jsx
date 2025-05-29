@@ -100,26 +100,28 @@ const CreateNftFormV2 = () => {
                             accept="image/*,video/*"
                         />
                         {preview ? (
-  file.type.includes("video/") ? (
-    <Box mt={3} sx={{ width: 460, maxHeight: 460 }}> 
-        src={preview}
-        controls
-        style={{ width: '100%', height: 'auto', maxHeight: '100%', display: 'block' }}
-    </Box>
-  ) : (
-    <Box
-      component="img"
-      src={preview}
-      alt="Preview"
-      sx={{ maxHeight: 460, maxWidth: 460, width: 'auto', height: 'auto', display: 'block' }} 
-    />
-  )
-) : (
-  <Stack alignItems="center">
-    <CloudUpload sx={{ fontSize: 50, mb: 1 }} />
-    <Typography>Click or drag media to upload (MAX SIZE 20 MB)</Typography>
-  </Stack>
-)}
+                            file.type.includes("video/") ? (
+                                <Box mt={3} sx={{ width: 460, maxHeight: 460 }}>
+                                    <video
+                                        src={preview}
+                                        controls
+                                        style={{ width: '100%', height: 'auto', maxHeight: '100%', display: 'block' }}
+                                    />
+                                </Box>
+                            ) : (
+                                <Box
+                                    component="img"
+                                    src={preview}
+                                    alt="Preview"
+                                    sx={{ maxHeight: 460, maxWidth: 460, width: 'auto', height: 'auto', display: 'block' }}
+                                />
+                            )
+                        ) : (
+                            <Stack alignItems="center">
+                                <CloudUpload sx={{ fontSize: 50, mb: 1 }} />
+                                <Typography>Click or drag media to upload (MAX SIZE 20 MB)</Typography>
+                            </Stack>
+                        )}
 
                     </Box>
                 </Grid>
