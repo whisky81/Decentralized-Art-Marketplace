@@ -167,10 +167,10 @@ export function getArtworkByTokenId(contract, tokenId) {
   });
 }
 
-export function getMyArts(contract) {
+export function getArtsOf(account, contract) {
   return new Promise(async (resolve, reject) => {
     try {
-      const proxyResult = Array.from(await contract.findMyAssets());
+      const proxyResult = Array.from(await contract.getAssetsOf(account)); 
       const res = [];
       for (const obj of proxyResult) {
         res.push(handleAsset(obj));

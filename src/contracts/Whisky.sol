@@ -253,16 +253,16 @@ contract Whisky is ERC721 {
         return availableAsset;
     }
 
-    function findMyAssets() public view returns (Asset[] memory) {
-        Asset[] memory myAssets = new Asset[](balanceOf(msg.sender));
+    function getAssetsOf(address account) public view returns (Asset[] memory) {
+        Asset[] memory assets = new Asset[](balanceOf(account)); 
         uint256 index = 0;
         for (uint256 i = 0; i < _nextTokenId; i++) {
-            if (_isOwner(msg.sender, i)) {
-                myAssets[index] = _assets[i];
-                index++;
+            if (_isOwner(account, i)) {
+                assets[index] = _assets[i];
+                index++; 
             }
         }
-        return myAssets;
+        return assets; 
     }
 
     function getAssetTransactions(

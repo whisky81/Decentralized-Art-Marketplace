@@ -2,14 +2,14 @@ import { useParams, Link } from "react-router-dom";
 import { useState, useEffect, useMemo } from "react";
 import Loading from "../components/Loading";
 import { ethers } from "ethers";
-import { getMyArts } from "../api/utils";
+import { getArtsOf } from "../api/utils";
 import { Box } from "@mui/material";
 import MyCard from "../components/Card";
 import AnotherAccount from "./AnotherAccount";
 import { usePE } from "../hooks/usePE";
 
 export default function MyWalletInfo() {
-    const { contract, provider } = usePE();
+    const { contract, provider, account: reqAcc } = usePE();
     const { account } = useParams();
     const [data, setData] = useState();
     const [arts, setArts] = useState();
@@ -27,15 +27,13 @@ export default function MyWalletInfo() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [requestAccount] = await provider.send("eth_requestAccounts", []);
-
                 const balance = await provider.getBalance(account);
                 const network = await provider.getNetwork();
 
-                setArts(await getMyArts(contract));
+                setArts(await getArtsOf(account, contract));
 
                 setData({
-                    reqAcc: requestAccount,
+                    reqAcc,
                     balance: ethers.formatEther(balance),
                     name: network.name,
                     chainId: network.chainId.toString()
@@ -110,10 +108,13 @@ export default function MyWalletInfo() {
                     mt: 0, // Remove extra top margin
                 }}
             >
-                {isSame(account, data.reqAcc) ? (
+                {
                     <Box display="flex" flexWrap="wrap" gap={2} justifyContent="center">
                         {arts.map((art) => {
                             art.owner = account;
+                            if (!isSame(account, data.reqAcc) && art.status === false) {
+                                return; 
+                            }
                             return (
                                 <Link
                                     key={art.tokenId}
@@ -124,10 +125,7 @@ export default function MyWalletInfo() {
                                 </Link>
                             );
                         })}
-                    </Box>
-                ) : (
-                    <AnotherAccount />
-                )}
+                    </Box>}
             </Box>
         </Box>
     );
