@@ -94,7 +94,7 @@ Thực hiện theo các bước sau để chạy demo:
     VITE_SERVER_URL=YOUR_EXPRESS_SERVER_URL
     VITE_GATEWAY_URL=YOUR_PINATA_GATEWAY_URL
     ```
-    Thay `YOUR_EXPRESS_SERVER_URL` bằng URL của server Express Pinata (ví dụ: `http://localhost:3001`) và `YOUR_PINATA_GATEWAY_URL` bằng Gateway URL của Pinata.
+    Thay `YOUR_EXPRESS_SERVER_URL` bằng URL của server Express Pinata (Mặc định: `http://localhost:8787`) và `YOUR_PINATA_GATEWAY_URL` bằng Gateway URL của Pinata.
 3.  **Khởi chạy ứng dụng Frontend:**
     * Trong Terminal tại thư mục `frontend`, chạy:
         ```bash
